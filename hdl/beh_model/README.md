@@ -1,167 +1,488 @@
-# Neuromorphic_X1 Behavioral Model (Wishbone)
+# Neuromorphic_X2_wb_beh Behavioral Model README
 
-**Version**: Simulation-only  
-**Address used**: 0x3000_0004
+This document explains the Wishbone-only behavioral model in
+`Neuromorphic_X2_wb_beh.v`.
 
----
+The model is intended for simulation. It hides detailed RTL internals and exposes
+only the firmware-visible Wishbone behavior: configuration writes, command
+writes, delayed program/read behavior, and TDC-style read results.
 
-## 1) What this is
+## File And Module
 
-This is a **non-synthesizable behavioral model** of a 32×32 1-bit array with a **Wishbone shim** in front. It is intended for simulation. It demonstrates how software can send **“commands”** over Wishbone to:
+Main file:
 
-- Program a cell
-- Request a read
-- Return read data later
-
-### Files in this project:
-
-- **Neuromorphic_X1_wb**: The Wishbone shim. It exposes **ONE address** (0x3000_0004). Writes/reads at that address are forwarded to the core.
-- **Neuromorphic_X1**: The behavioral **core** that holds:
-  - The 32×32 array
-  - An input FIFO (commands)
-  - An output FIFO (read data)
-
-**Important**: This model uses `@(posedge clk)` inside `always` blocks to create delay loops. This is **for simulation only** and is **not synthesizable**.
-
----
-
-## 2) The One Wishbone Address (0x3000_0004)
-
-The shim only has address `0x3000_0004`:
-
-- **WB WRITE** to `0x3000_0004`: Your 32-bit word is treated as a command.
-- **WB READ** from `0x3000_0004`: You pop one 32-bit word of read data.
-
-### The shim checks:
-
-`EN = (stb & cyc & (adr == 0x3000_0004) & (sel == 4’hF))`
-
-### Signal Mapping (shim → core):
-
-| Signal    | Description |
-|-----------|-------------|
-| CLKin     | `wb_clk_i` |
-| RSTin     | `wb_rst_i` |
-| DI        | `wbs_dat_i` (write data / command word) |
-| W_RB      | `wbs_we_i` (1 = write command, 0 = read pop) |
-| DO        | `wbs_dat_o` (read data back to Wishbone) |
-| core_ack  | `wbs_ack_o` (acknowledge back to Wishbone) |
-
-### ACK Behavior
-
-- **For a WRITE cycle** at `0x3000_0004`, `core_ack = 1` when the command is successfully pushed into the input FIFO.
-- **For a READ cycle** at `0x3000_0004`:
-  - If valid data is available in `op_fifo`, one word is popped into `DO` and `ACK=1`.
-  - If no data is available in `op_fifo`, `ACK` is still asserted and `DO = 32'hDEAD_C0DE`.
-
-This prevents the master from halting or getting stuck waiting forever.
-
-Also, if a READ command is issued but Wishbone read is initiated **before data is fetched from the crossbar array into `op_fifo`**, then:
-- `ACK = 1`
-- `DO = 32'hDEAD_C0DE`
-
-This acts as a “not ready / retry later” response.
-
----
-
-## 3) Command Word Format (The 32-bit DI)
-
-**Bits**:
-- `[31:30] MODE`
-- `[29:25] ROW`
-- `[24:20] COL`
-- `[19:0] DATA/flags`
-
-### Supported MODE values
-
-- **2’b11** → PROGRAM (Write bit at [ROW][COL])
-- **2’b01** → READ (Queue read of [ROW][COL])
-- **2’b10** → FORMING (reserved / not implemented)
-
-#### PROGRAM (MODE=2’b11)
-
-Programming decision is based on `DATA[7:0]` threshold:
-
-- If `DATA[7:0] > 8'h7F` → write `1` into the cell
-- If `DATA[7:0] <= 8'h7F` → write `0` into the cell
-
-Examples:
-- `8'hFF` → writes `1`
-- `8'h80` → writes `1`
-- `8'h7F` → writes `0`
-- `8'h00` → writes `0`
-
-#### READ (MODE=2’b01)
-
-- Core later pushes bit at `[ROW][COL]` into output FIFO.
-- WB READ at `0x3000_0004` pops one value when available.
-- If unavailable, returns `32'hDEAD_C0DE`.
-
----
-
-## 4) Core Internals
-
-- **32×32 1-bit array**: `array_mem[row][col]`
-- **Input FIFO** (`ip_fifo`, depth 32)
-- **Output FIFO** (`op_fifo`, depth 32)
-
-### Engine behavior
-
-- Pops commands from `ip_fifo`
-- PROGRAM: waits `WR_Dly`, then updates bit
-- READ: waits `RD_Dly`, then pushes result into `op_fifo`
-
----
-
-## 5) Timing / Delays
-
-**Default delays:**
-- `WR_Dly = 200`
-- `RD_Dly = 44`
-
-Writes are acknowledged immediately after enqueue.
-
-Reads:
-- Return real data if available
-- Else return `32'hDEAD_C0DE`
-
----
-
-## 6) Software Example
-
-Use address: `0x3000_0004`
-
-**PROGRAM cell (row=1, col=1):**
-```c
-write32(0x3000_0004, {2’b11, 5’d1, 5’d1, 20’h080});
+```text
+Neuromorphic_X2_wb_beh.v
 ```
 
-**Queue READ:**
-```c
-write32(0x3000_0004, {2’b01, 5’d1, 5’d1, 20’h00000});
+Primary module:
+
+```verilog
+module Neuromorphic_X2_wb_beh
 ```
 
-**Pop result:**
-```c
-if Read Immediately
-data = read32(0x3000_0004);
+Optional wrapper module, compiled only when this define is enabled:
 
-if (data == 0xDEADC0DE) {
-    // data not ready, retry later
-}
+```verilog
+`define NEUROMORPHIC_X2_WB_BEH_AS_RTL
+module Neuromorphic_X2_wb
 ```
 
-```c
-if Read after Read Delay
-data = read32(0x3000_0004);
+The testbench normally instantiates `Neuromorphic_X2_wb_beh` directly.
 
-if (data == 0x00000001) {
-    // data was ready and valid
-}
+## Wishbone Interface
+
+The model uses a simple 32-bit Wishbone-style interface:
+
+```verilog
+input         wb_clk_i;
+input         wb_rst_i;
+input         wbs_stb_i;
+input         wbs_cyc_i;
+input         wbs_we_i;
+input  [3:0]  wbs_sel_i;
+input  [31:0] wbs_dat_i;
+input  [31:0] wbs_adr_i;
+output [31:0] wbs_dat_o;
+output        wbs_ack_o;
 ```
 
----
+A transaction is selected only when all of these are true:
 
-## 7) Notes
+```verilog
+wbs_stb_i == 1'b1
+wbs_cyc_i == 1'b1
+wbs_sel_i == 4'hF
+wbs_adr_i == ADDR_MATCH
+```
 
-This is a **simulation-only behavioral model** intended for documentation and verification.
+Default address:
+
+```verilog
+ADDR_MATCH = 32'h3000_0004
+```
+
+## Wishbone ACK Behavior
+
+The behavioral model is decoupled internally using a command FIFO and a response
+FIFO.
+
+For a Wishbone write:
+
+1. The master drives `wbs_we_i = 1'b1`.
+2. If the address/select match and the command FIFO is not full, the model stores
+   `wbs_dat_i` into the command FIFO.
+3. `wbs_ack_o` pulses high for one clock.
+
+For a Wishbone read:
+
+1. The master drives `wbs_we_i = 1'b0`.
+2. If a response word is available, the model places it on `wbs_dat_o`.
+3. `wbs_ack_o` pulses high for one clock.
+4. If no response is ready, the model does not ACK. The master waits.
+
+There is no empty-read token. A Wishbone read completes only when data is ready.
+
+## Parameters
+
+```verilog
+parameter [31:0] ADDR_MATCH     = 32'h3000_0004;
+parameter integer READ_DELAY    = 160;
+parameter integer PROGRAM_DELAY = 220;
+parameter integer COMPUTE_DELAY = 180;
+parameter integer CONFIG_WRITES = 3;
+```
+
+`READ_DELAY`, `PROGRAM_DELAY`, and `COMPUTE_DELAY` are simulation delays. They
+model the approximate latency of the real RTL/analog-assisted operation using
+clock waits such as:
+
+```verilog
+repeat (READ_DELAY) @(posedge wb_clk_i);
+```
+
+## Initialization And Configuration
+
+After reset, the first three Wishbone writes are always treated as configuration
+packets. They are not treated as normal SET/RESET/READ commands.
+
+### Config Packet 0
+
+```verilog
+target_set1 = packet[15:0];
+target_set2 = packet[31:16];
+```
+
+Example:
+
+```verilog
+{TARGET_SET2, TARGET_SET1}
+```
+
+### Config Packet 1
+
+```verilog
+target_reset1 = packet[15:0];
+target_reset2 = packet[31:16];
+```
+
+Example:
+
+```verilog
+{TARGET_RESET2, TARGET_RESET1}
+```
+
+### Config Packet 2
+
+```verilog
+no_of_clk_cycles = packet[9:0];
+counter_value    = packet[19:10];
+tdc_time_out     = packet[26:20];
+tdc_dead_time    = packet[31:30];
+```
+
+Example:
+
+```verilog
+{2'b01, 3'b000, 7'd32, 10'd3, 10'd3}
+```
+
+## Runtime Reconfiguration
+
+The model can return to configuration mode during normal operation.
+
+Runtime reconfiguration is triggered by this command packet:
+
+```verilog
+mode  = 2'b11;  // SET mode
+row   = 5'd0;
+col   = 5'd0;
+bit17 = 1'b1;
+```
+
+In packet form:
+
+```verilog
+{2'b11, 5'd0, 5'd0, 1'b0, 1'b0, 1'b1, 9'd0, 8'h00}
+```
+
+When this packet is received:
+
+1. It is not used to program cell `(0,0)`.
+2. The model resets `config_count` to zero.
+3. The next three Wishbone writes are consumed as Config0, Config1, and Config2.
+
+## Normal Command Packet Format
+
+After the first three config writes, normal command packets use this layout:
+
+```text
+[31:30] mode
+[29:25] row
+[24:20] column
+[19]    status_readback
+[18]    full_row
+[17]    runtime reconfig trigger
+[16:8]  unused/reserved in this model
+[7:0]   data_byte
+```
+
+The testbench helper packs this as:
+
+```verilog
+make_packet(mode, row, col, status_read, full_row, data_byte)
+```
+
+which returns:
+
+```verilog
+{mode, row, col, status_read, full_row, 10'd0, data_byte}
+```
+
+## Command Modes
+
+### RESET Mode
+
+```verilog
+mode = 2'b00
+```
+
+RESET mode programs the selected cell into a reset-like TDC level. It waits:
+
+```verilog
+PROGRAM_DELAY + no_of_clk_cycles
+```
+
+Then it stores:
+
+```verilog
+cell_level[row,col] = midpoint(target_reset1, target_reset2) + data_byte;
+array_state[row][col] = 1'b0;
+```
+
+RESET does not produce a Wishbone read result. A later READ command must be sent
+to generate a TDC result.
+
+### READ Mode
+
+```verilog
+mode = 2'b01
+```
+
+READ mode waits:
+
+```verilog
+READ_DELAY
+```
+
+Then it pushes one or more response words into the response FIFO.
+
+For a single-cell read:
+
+```verilog
+full_row = 1'b0;
+```
+
+Only `packet[24:20]` is returned.
+
+For a full-row read:
+
+```verilog
+full_row = 1'b1;
+```
+
+The model returns 32 response words, one for each column in the selected row.
+
+### COMPUTE Mode
+
+```verilog
+mode = 2'b10
+```
+
+Compute mode waits for three compute packets. The first two packets are stored.
+When the third compute packet arrives, the model waits `COMPUTE_DELAY` and
+generates 32 result words.
+
+The selected compute column is taken from the third compute packet:
+
+```verilog
+selected_col = packet2[24:20];
+```
+
+The result order is:
+
+```text
+selected column first,
+then columns 0 to 31 in order,
+skipping the selected column because it was already returned first
+```
+
+For example, if the third compute packet uses column `7`, the returned column
+order is:
+
+```text
+7, 0, 1, 2, 3, 4, 5, 6, 8, 9, ..., 31
+```
+
+The first result word is the computed result for the selected column. For that
+selected column, the model checks the three compute rows. If the corresponding
+cell is SET, that packet's `data_byte` is added to the compute TDC value:
+
+```verilog
+acc = 14'd0;
+
+if (array_state[packet0_row][selected_col])
+  acc = acc + packet0_data_byte;
+
+if (array_state[packet1_row][selected_col])
+  acc = acc + packet1_data_byte;
+
+if (array_state[packet2_row][selected_col])
+  acc = acc + packet2_data_byte;
+
+first_compute_word = {13'd0, selected_col, acc};
+```
+
+The remaining 31 result words use the column address of each remaining column
+and a timeout TDC value. The timeout TDC keeps `tdc_time_out` in the LSB side
+and pads the upper bits with zero:
+
+```verilog
+timeout_tdc_value = {7'd0, tdc_time_out[6:0]};
+remaining_word    = {13'd0, column[4:0], timeout_tdc_value[13:0]};
+```
+
+So if `tdc_time_out = 7'd32`, the remaining columns return:
+
+```verilog
+timeout_tdc_value = 14'h0020;
+```
+
+If `tdc_time_out = 7'd40`, the remaining columns return:
+
+```verilog
+timeout_tdc_value = 14'h0028;
+```
+
+Because each Wishbone read returns only one 32-bit word, software or the
+testbench must perform 32 Wishbone reads after one compute operation.
+
+### SET Mode
+
+```verilog
+mode = 2'b11
+```
+
+SET mode programs the selected cell into a set-like TDC level. It waits:
+
+```verilog
+PROGRAM_DELAY + no_of_clk_cycles
+```
+
+Then it stores:
+
+```verilog
+cell_level[row,col] = midpoint(target_set1, target_set2) + data_byte;
+array_state[row][col] = 1'b1;
+```
+
+SET does not produce a Wishbone read result. A later READ command must be sent to
+generate a TDC result.
+
+## TDC Result Format
+
+Every normal read result is a 32-bit word:
+
+```verilog
+wbs_dat_o = {13'd0, column[4:0], tdc_value[13:0]};
+```
+
+Decode it like this:
+
+```verilog
+read_column = rdata[18:14];
+tdc_value   = rdata[13:0];
+```
+
+Bits `[31:19]` are zero for normal TDC result words.
+
+The same output packing is used for compute results:
+
+```verilog
+compute_column = rdata[18:14];
+compute_tdc    = rdata[13:0];
+```
+
+For compute, the first returned word contains the selected-column computation.
+The following 31 returned words contain the timeout TDC value and each remaining
+column address.
+
+## TDC Value Calculation
+
+The model does not simulate analog circuitry. Instead, it stores a digital
+representative TDC level for each cell.
+
+For SET:
+
+```verilog
+stored_level = midpoint(target_set1, target_set2) + set_data_byte;
+```
+
+For RESET:
+
+```verilog
+stored_level = midpoint(target_reset1, target_reset2) + reset_data_byte;
+```
+
+For READ:
+
+```verilog
+raw_tdc = stored_level + read_data_byte;
+```
+
+Then the value is clamped by the configured timeout:
+
+```verilog
+timeout_ceiling = {tdc_time_out[5:0], 8'hFF};
+tdc_value = (raw_tdc > timeout_ceiling) ? timeout_ceiling : raw_tdc;
+```
+
+## Example Using Testbench Config Values
+
+The testbench initially uses:
+
+```verilog
+TARGET_SET1   = 16'h0300;
+TARGET_SET2   = 16'h0200;
+TARGET_RESET1 = 16'h0040;
+TARGET_RESET2 = 16'h0080;
+```
+
+The midpoints are:
+
+```verilog
+SET midpoint   = (16'h0300 + 16'h0200) / 2 = 14'h0280;
+RESET midpoint = (16'h0040 + 16'h0080) / 2 = 14'h0060;
+```
+
+A simple threshold to classify SET vs RESET is:
+
+```verilog
+threshold = (14'h0280 + 14'h0060) / 2 = 14'h0170;
+```
+
+After a Wishbone read:
+
+```verilog
+tdc_value = rdata[13:0];
+
+if (tdc_value >= 14'h0170)
+  cell_state = SET;
+else
+  cell_state = RESET;
+```
+
+For example, SET row `1`, column `3` with data `8'hA5`, then READ row `1`,
+column `3` with data `8'h12`:
+
+```verilog
+stored_level = 14'h0280 + 8'hA5 = 14'h0325;
+tdc_value    = 14'h0325 + 8'h12 = 14'h0337;
+wbs_dat_o    = {13'd0, 5'd3, 14'h0337} = 32'h0000_C337;
+```
+
+## Status Readback
+
+If a command packet has bit `[19]` set, the next Wishbone read returns status
+instead of a TDC FIFO result:
+
+```verilog
+wbs_dat_o = {29'd0, status_code};
+```
+
+Status codes used by the model:
+
+```verilog
+STATUS_OK           = 3'b000;
+STATUS_BAD_COMMAND  = 3'b010;
+STATUS_COMPUTE_WAIT = 3'b100;
+```
+
+Normal TDC reads should keep bit `[19]` low.
+
+## Important Usage Notes
+
+- Always send the three config writes after reset before normal commands.
+- SET and RESET only update the modeled cell state and TDC level.
+- READ commands generate output data.
+- COMPUTE commands are accepted as a group of three packets.
+- One COMPUTE operation generates 32 response words.
+- After COMPUTE, perform 32 Wishbone reads to drain the full result set.
+- The first COMPUTE read is the selected column output.
+- The remaining COMPUTE reads return timeout TDC values with the remaining
+  column addresses.
+- Compute timeout TDC packing is `{7'd0, tdc_time_out[6:0]}`.
+- Wishbone bus reads only complete when response data is ready.
+- Decode `rdata[18:14]` as column and `rdata[13:0]` as TDC value.
+- Do not expect a response word immediately from SET or RESET unless a READ
+  command has been sent.
