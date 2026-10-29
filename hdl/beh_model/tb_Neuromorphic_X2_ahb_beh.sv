@@ -308,6 +308,21 @@ module tb_Neuromorphic_X2_ahb_beh;
     check_word({30'b0, HRESP}, {30'b0, HRESP_OKAY},
                "AHB OKAY response after reset");
 
+    $display("\n=== TEST 1: FRAME PACKING AND IDLE BUS ===");
+    check_word(command_word(MODE_SET, 9'd0, 9'd0,
+                            1'b0, 1'b0, 1'b0, 8'h01),
+               32'hC000_0001, "SET command frame at row 0 column 0");
+    check_word(command_word(MODE_READ, 9'd511, 9'd511,
+                            1'b0, 1'b0, 1'b0, 8'h07),
+               32'h7FFF_F007, "READ command frame at row 511 column 511");
+    check_word(expected_result(MODE_READ, 9'd511, 14'h0116),
+               32'h00FF_C116, "READ result frame packing example");
+    repeat (3) @(posedge HCLK);
+    @(negedge HCLK);
+    check_bit(dut.command_empty, 1'b1,
+              "idle bus does not create a command");
+
+    $display("\n=== TEST 2: THREE CONFIGURATION WRITES ===");
     // Configuration packet 0: SET thresholds both 0x0100.
     ahb_write(X2_ADDR, HSIZE_WORD, 32'h0100_0100,
               response, wait_cycles, error_wait_seen);
@@ -333,6 +348,56 @@ module tb_Neuromorphic_X2_ahb_beh;
                "empty read AHB response");
     check_word(read_data, 32'hA000_0000, "empty result FIFO value");
 
+    $display("\n=== TEST 3: BASIC MINIMUM-ADDRESS OPERATIONS ===");
+    // The simplest functional example uses row 0 and column 0.  SET PWM 1
+    // programs level 0x0101.  A READ with PWM 0 returns that same count.
+    ahb_write(X2_ADDR, HSIZE_WORD,
+              command_word(MODE_SET, 9'd0, 9'd0,
+                           1'b0, 1'b0, 1'b0, 8'd1),
+              response, wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "basic SET command AHB response");
+    wait_for_response("basic SET row 0 column 0");
+    ahb_read(X2_ADDR, HSIZE_WORD, read_data, response,
+             wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "basic SET result AHB response");
+    check_word(read_data, expected_result(MODE_SET, 9'd0, 14'h0101),
+               "basic SET automatic readback");
+
+    ahb_write(X2_ADDR, HSIZE_WORD,
+              command_word(MODE_READ, 9'd0, 9'd0,
+                           1'b0, 1'b0, 1'b0, 8'd0),
+              response, wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "basic READ command AHB response");
+    wait_for_response("basic READ row 0 column 0");
+    ahb_read(X2_ADDR, HSIZE_WORD, read_data, response,
+             wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "basic READ result AHB response");
+    check_word(read_data, expected_result(MODE_READ, 9'd0, 14'h0101),
+               "basic READ result");
+
+    // A one-packet COMPUTE sets bit 9 in the same command that supplies the
+    // selected row, column, and PWM.  One programmed row with PWM 6 gives 6.
+    ahb_write(X2_ADDR, HSIZE_WORD,
+              command_word(MODE_COMPUTE, 9'd0, 9'd0,
+                           1'b0, 1'b0, 1'b1, 8'd6),
+              response, wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "basic COMPUTE command AHB response");
+    wait_for_response("basic one-packet COMPUTE");
+    ahb_read(X2_ADDR, HSIZE_WORD, read_data, response,
+             wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "basic COMPUTE result AHB response");
+    check_word(read_data, expected_result(MODE_COMPUTE, 9'd0, 14'd6),
+               "basic one-row COMPUTE result");
+    check_bit(dut.response_empty, 1'b1,
+              "basic COMPUTE generated one result");
+
+    $display("\n=== TEST 4: SET, READ, AND RESET SEQUENCE ===");
     // SET row 2, column 3, PWM 5.  Expected level is 0x0105.
     ahb_write(X2_ADDR, HSIZE_WORD,
               command_word(MODE_SET, 9'd2, 9'd3, 1'b0, 1'b0, 1'b0, 8'd5),
@@ -365,6 +430,7 @@ module tb_Neuromorphic_X2_ahb_beh;
     check_word(read_data, expected_result(MODE_RESET, 9'd3, 14'h0029),
                "RESET automatic readback");
 
+    $display("\n=== TEST 5: MULTI-ROW AND MULTI-COLUMN COMPUTE ===");
     // Program two cells used by a two-row COMPUTE burst.
     ahb_write(X2_ADDR, HSIZE_WORD,
               command_word(MODE_SET, 9'd0, 9'd5,
@@ -401,6 +467,100 @@ module tb_Neuromorphic_X2_ahb_beh;
     check_word(read_data, expected_result(MODE_COMPUTE, 9'd5, 14'd7),
                "two-row COMPUTE result");
 
+    // Add a programmed cell in a second column.  The following two COMPUTE
+    // packets select rows 0 and 1 and unique columns 5 and 6.  Results are
+    // returned in ascending global-column order.
+    ahb_write(X2_ADDR, HSIZE_WORD,
+              command_word(MODE_SET, 9'd1, 9'd6,
+                           1'b0, 1'b0, 1'b0, 8'd30),
+              response, wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "second-column SET command AHB response");
+    wait_for_response("SET row 1 column 6");
+    ahb_read(X2_ADDR, HSIZE_WORD, read_data, response,
+             wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "second-column SET result AHB response");
+    check_word(read_data, expected_result(MODE_SET, 9'd6, 14'h0125),
+               "SET row 1 column 6 readback");
+
+    ahb_write(X2_ADDR, HSIZE_WORD,
+              command_word(MODE_COMPUTE, 9'd0, 9'd5,
+                           1'b0, 1'b0, 1'b0, 8'd3),
+              response, wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "multi-column COMPUTE packet 0 response");
+    ahb_write(X2_ADDR, HSIZE_WORD,
+              command_word(MODE_COMPUTE, 9'd1, 9'd6,
+                           1'b0, 1'b0, 1'b1, 8'd4),
+              response, wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "multi-column COMPUTE final packet response");
+    wait_for_response("two-column COMPUTE results");
+    ahb_read(X2_ADDR, HSIZE_WORD, read_data, response,
+             wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "column 5 COMPUTE read response");
+    check_word(read_data, expected_result(MODE_COMPUTE, 9'd5, 14'd7),
+               "multi-column COMPUTE result column 5");
+    ahb_read(X2_ADDR, HSIZE_WORD, read_data, response,
+             wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "column 6 COMPUTE read response");
+    check_word(read_data, expected_result(MODE_COMPUTE, 9'd6, 14'd4),
+               "multi-column COMPUTE result column 6");
+    check_bit(dut.response_empty, 1'b1,
+              "multi-column COMPUTE generated two results");
+
+    $display("\n=== TEST 6: MAXIMUM 9-BIT ADDRESS ===");
+    // Exercise the other end of the 9-bit address range.  SET PWM 15 creates
+    // level 0x010F; automatic readback and explicit READ both add the retained
+    // READ PWM 7, producing 0x0116.  A one-row COMPUTE returns PWM 8.
+    ahb_write(X2_ADDR, HSIZE_WORD,
+              command_word(MODE_SET, 9'd511, 9'd511,
+                           1'b0, 1'b0, 1'b0, 8'd15),
+              response, wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "maximum-address SET command AHB response");
+    wait_for_response("SET row 511 column 511");
+    ahb_read(X2_ADDR, HSIZE_WORD, read_data, response,
+             wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "maximum-address SET result AHB response");
+    check_word(read_data, expected_result(MODE_SET, 9'd511, 14'h0116),
+               "maximum-address SET readback");
+
+    ahb_write(X2_ADDR, HSIZE_WORD,
+              command_word(MODE_READ, 9'd511, 9'd511,
+                           1'b0, 1'b0, 1'b0, 8'd7),
+              response, wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "maximum-address READ command AHB response");
+    wait_for_response("READ row 511 column 511");
+    ahb_read(X2_ADDR, HSIZE_WORD, read_data, response,
+             wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "maximum-address READ result AHB response");
+    check_word(read_data, expected_result(MODE_READ, 9'd511, 14'h0116),
+               "maximum-address READ result");
+
+    ahb_write(X2_ADDR, HSIZE_WORD,
+              command_word(MODE_COMPUTE, 9'd511, 9'd511,
+                           1'b0, 1'b0, 1'b1, 8'd8),
+              response, wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "maximum-address COMPUTE command AHB response");
+    wait_for_response("COMPUTE row 511 column 511");
+    ahb_read(X2_ADDR, HSIZE_WORD, read_data, response,
+             wait_cycles, error_wait_seen);
+    check_word({30'b0, response}, {30'b0, HRESP_OKAY},
+               "maximum-address COMPUTE result AHB response");
+    check_word(read_data, expected_result(MODE_COMPUTE, 9'd511, 14'd8),
+               "maximum-address COMPUTE result");
+    check_bit(dut.response_empty, 1'b1,
+              "maximum-address COMPUTE generated one result");
+
+    $display("\n=== TEST 7: COMPUTE-ALL CBA BOUNDARIES ===");
     // Verify the exact horizontal CBA boundary: requested column 31 selects
     // global columns 0:31, while requested column 32 selects columns 32:63.
     ahb_write(X2_ADDR, HSIZE_WORD,
@@ -413,7 +573,7 @@ module tb_Neuromorphic_X2_ahb_beh;
                wait_cycles, error_wait_seen);
       check_word(read_data,
                  expected_result(MODE_COMPUTE, i[8:0],
-                                 (i == 5) ? 14'd2 : 14'd0),
+                                 ((i == 0) || (i == 5)) ? 14'd2 : 14'd0),
                  "column 31 selects bank 0:31");
     end
 
@@ -431,6 +591,7 @@ module tb_Neuromorphic_X2_ahb_beh;
     check_bit(dut.response_empty, 1'b1,
               "boundary compute-all operations returned 32 results each");
 
+    $display("\n=== TEST 8: MID-RANGE 9-BIT ADDRESS AND COMPUTE-ALL ===");
     // Exercise the widened address fields above the old 32x32 range.
     // Row 300 / column 68 belongs to vertical CBA 9 and horizontal CBA 2.
     ahb_write(X2_ADDR, HSIZE_WORD,
@@ -472,6 +633,7 @@ module tb_Neuromorphic_X2_ahb_beh;
     check_bit(dut.response_empty, 1'b1,
               "compute-all generated exactly 32 results");
 
+    $display("\n=== TEST 9: AHB ERROR RESPONSES ===");
     // Unsupported sizes and addresses must generate the two-bit AHB ERROR
     // response, with the first ERROR cycle held in a wait state.
     ahb_read(X2_ADDR, HSIZE_BYTE, read_data, response,
@@ -486,6 +648,7 @@ module tb_Neuromorphic_X2_ahb_beh;
                "invalid address ERROR response");
     check_bit(error_wait_seen, 1'b1, "invalid address two-cycle ERROR");
 
+    $display("\n=== TEST 10: COMMAND FIFO BACKPRESSURE ===");
     // Flood slow SET commands to prove that a full command FIFO stalls AHB
     // through HREADYOUT and subsequently resumes without dropping the write.
     max_wait_cycles = 0;
