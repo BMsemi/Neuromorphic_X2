@@ -281,6 +281,12 @@ module Neuromorphic_X2_ahb_beh #(
   endfunction
 
   // 512x512 output format: mode, global column, coarse count, fine count.
+  // Differential signed-column convention:
+  // Physical columns are paired as (2*n, 2*n+1).
+  // Result column 2*n   = TDC[2*n]   - TDC[2*n+1].
+  // Result column 2*n+1 = TDC[2*n+1] - TDC[2*n].
+  // result[22:14] identifies the minuend column.
+  // result[13:0] is the 14-bit signed two's-complement difference.
   function automatic [31:0] result_word;
     input logic [1:0]  mode;
     input logic [8:0]  col_index;

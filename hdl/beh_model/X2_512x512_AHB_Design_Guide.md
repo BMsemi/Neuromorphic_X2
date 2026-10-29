@@ -152,6 +152,20 @@ Every non-status result uses this 32-bit format:
 | `13:8` | Coarse count | Upper six bits of the 14-bit count |
 | `7:0` | Fine count | Lower eight bits of the 14-bit count |
 
+## Differential signed-column convention
+
+Signed weights are represented using adjacent physical-column pairs `(2*n, 2*n+1)`.
+
+- TDC result `2*n` represents `column[2*n] - column[2*n+1]`.
+- TDC result `2*n+1` represents `column[2*n+1] - column[2*n]`.
+
+For example:
+
+- TDC0 = column 0 - column 1
+- TDC1 = column 1 - column 0
+
+Result bits `[22:14]` identify the minuend column. Result bits `[13:0]` contain the signed differential count encoded as 14-bit two's complement.
+
 The full count is reconstructed as `result[13:0]`. The global result column is `result[22:14]`.
 
 When the result FIFO is empty and status mode is not selected, an AHB read returns `32'hA000_0000` without consuming any entry.
