@@ -1,13 +1,13 @@
 info:
   name: Neuromorphic_X2
-  description: Commercial 512x512 1T1R Analog In-Memory Compute Macro
+  description: Commercial 512x512 1T1R analog in-memory compute macro with a 32-bit AHB subordinate interface
   repo: https://github.com/BMsemi/Neuromorphic_X2
   owner: BM LABS
   license: Apache-2.0
   author: BM LABS
   email: samarthjain@bmsemi.org
-  version: v1.1.0
-  date: 03-08-2026
+  version: v2.0.0
+  date: 30-10-2026
   category: analog
   tags:
     - neuromorphic
@@ -15,13 +15,25 @@ info:
     - 1T1R
     - in-memory-compute
     - low-power
+    - AHB
   bus:
-    - WB
+    - AHB
+  interface:
+    role: subordinate
+    address_width: 32
+    data_width: 32
+    default_address: 0xE0000004
   type: hard
-  status: verified
-  width: 3874.000   # macro width in μm
-  height: 3805.000 # macro height in μm
+  status: behavioral-verified
+  physical_view_status: provisional-interface-alignment
+  width: 3874.000
+  height: 3805.000
   technology: sky130
   digital_supply_voltage: 1.8
   analog_supply_voltage: 1.8
-registers: []
+registers:
+  - name: X2_DATA
+    address: 0xE0000004
+    width: 32
+    access: read-write
+    description: Command write and queued-result read data register

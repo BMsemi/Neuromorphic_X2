@@ -1,0 +1,787 @@
+library (Neuromorphic_X2_ahb) {
+  delay_model : table_lookup;
+  comment : "PROVISIONAL_AHB_INTERFACE_VIEW; regenerate and characterize the implemented AHB macro before fabrication.";
+  time_unit : "1ns";
+  voltage_unit : "1V";
+  current_unit : "1mA";
+  capacitive_load_unit (1, pf);
+  leakage_power_unit : "1nW";
+  bus_naming_style : "%s[%d]";
+  nom_process : 1.0;
+  nom_temperature : 25.0;
+  nom_voltage : 1.8;
+  cell (Neuromorphic_X2_ahb) {
+    area : 14741570.0;
+    dont_touch : true;
+    dont_use : true;
+    is_macro_cell : true;
+    pin (Bias_comp2) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (HCLK) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (HMASTLOCK) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (HREADY) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (HREADYOUT) {
+      direction : output;
+      max_transition : 0.5000;
+    }
+    pin (HRESETn) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (HSEL) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (HWRITE) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (Iref) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (ScanInCC) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (ScanInDL) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (ScanInDR) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (ScanOutCC) {
+      direction : output;
+      max_transition : 0.5000;
+    }
+    pin (TM) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pg_pin (VDDA1) {
+      pg_type : primary_power;
+    }
+    pg_pin (VDDA2) {
+      pg_type : primary_power;
+    }
+    pg_pin (VDDC1) {
+      pg_type : primary_power;
+    }
+    pg_pin (VDDC2) {
+      pg_type : primary_power;
+    }
+    pg_pin (VSS) {
+      pg_type : primary_ground;
+    }
+    pin (Vbias) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (Vcc_read) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (Vcc_set) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (Vcc_wl_read) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (Vcc_wl_reset) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (Vcc_wl_set) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (Vcomp) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (dc_bias) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (user_clk) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    pin (user_rst) {
+      direction : input;
+      capacitance : 0.0100;
+      max_transition : 0.5000;
+    }
+    type (bus_HADDR) {
+      base_type : array;
+      data_type : bit;
+      bit_width : 32;
+      bit_from : 31;
+      bit_to : 0;
+      downto : true;
+    }
+    bus (HADDR) {
+      bus_type : bus_HADDR;
+      pin (HADDR[31]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[30]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[29]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[28]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[27]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[26]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[25]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[24]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[23]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[22]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[21]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[20]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[19]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[18]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[17]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[16]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[15]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[14]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[13]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[12]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[11]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[10]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[9]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[8]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[7]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[6]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[5]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[4]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[3]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[2]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[1]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HADDR[0]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+    }
+    type (bus_HBURST) {
+      base_type : array;
+      data_type : bit;
+      bit_width : 3;
+      bit_from : 2;
+      bit_to : 0;
+      downto : true;
+    }
+    bus (HBURST) {
+      bus_type : bus_HBURST;
+      pin (HBURST[2]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HBURST[1]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HBURST[0]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+    }
+    type (bus_HMASTER) {
+      base_type : array;
+      data_type : bit;
+      bit_width : 4;
+      bit_from : 3;
+      bit_to : 0;
+      downto : true;
+    }
+    bus (HMASTER) {
+      bus_type : bus_HMASTER;
+      pin (HMASTER[3]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HMASTER[2]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HMASTER[1]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HMASTER[0]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+    }
+    type (bus_HPROT) {
+      base_type : array;
+      data_type : bit;
+      bit_width : 4;
+      bit_from : 3;
+      bit_to : 0;
+      downto : true;
+    }
+    bus (HPROT) {
+      bus_type : bus_HPROT;
+      pin (HPROT[3]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HPROT[2]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HPROT[1]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HPROT[0]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+    }
+    type (bus_HRDATA) {
+      base_type : array;
+      data_type : bit;
+      bit_width : 32;
+      bit_from : 31;
+      bit_to : 0;
+      downto : true;
+    }
+    bus (HRDATA) {
+      bus_type : bus_HRDATA;
+      pin (HRDATA[31]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[30]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[29]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[28]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[27]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[26]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[25]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[24]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[23]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[22]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[21]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[20]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[19]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[18]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[17]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[16]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[15]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[14]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[13]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[12]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[11]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[10]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[9]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[8]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[7]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[6]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[5]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[4]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[3]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[2]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[1]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRDATA[0]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+    }
+    type (bus_HRESP) {
+      base_type : array;
+      data_type : bit;
+      bit_width : 2;
+      bit_from : 1;
+      bit_to : 0;
+      downto : true;
+    }
+    bus (HRESP) {
+      bus_type : bus_HRESP;
+      pin (HRESP[1]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+      pin (HRESP[0]) {
+        direction : output;
+        max_transition : 0.5000;
+      }
+    }
+    type (bus_HSIZE) {
+      base_type : array;
+      data_type : bit;
+      bit_width : 3;
+      bit_from : 2;
+      bit_to : 0;
+      downto : true;
+    }
+    bus (HSIZE) {
+      bus_type : bus_HSIZE;
+      pin (HSIZE[2]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HSIZE[1]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HSIZE[0]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+    }
+    type (bus_HTRANS) {
+      base_type : array;
+      data_type : bit;
+      bit_width : 2;
+      bit_from : 1;
+      bit_to : 0;
+      downto : true;
+    }
+    bus (HTRANS) {
+      bus_type : bus_HTRANS;
+      pin (HTRANS[1]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HTRANS[0]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+    }
+    type (bus_HWDATA) {
+      base_type : array;
+      data_type : bit;
+      bit_width : 32;
+      bit_from : 31;
+      bit_to : 0;
+      downto : true;
+    }
+    bus (HWDATA) {
+      bus_type : bus_HWDATA;
+      pin (HWDATA[31]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[30]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[29]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[28]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[27]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[26]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[25]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[24]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[23]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[22]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[21]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[20]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[19]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[18]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[17]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[16]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[15]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[14]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[13]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[12]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[11]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[10]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[9]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[8]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[7]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[6]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[5]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[4]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[3]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[2]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[1]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+      pin (HWDATA[0]) {
+        direction : input;
+        capacitance : 0.0100;
+        max_transition : 0.5000;
+      }
+    }
+  }
+}
