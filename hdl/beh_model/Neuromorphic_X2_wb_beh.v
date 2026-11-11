@@ -1,36 +1,38 @@
 `timescale 1ns/1ps
 
 // -----------------------------------------------------------------------------
-// Behavioral model for the September 2026 V2 RTL.
+// Behavioral model for the September 2026 V2 RTL with a Wishbone interface.
 //
-// This model keeps the external interface of the previous
-// Neuromorphic_X2_wb_beh model, but follows the firmware-visible behavior of
-// the RTL in this directory:
+// This model exposes a classic 32-bit Wishbone subordinate interface.  The X2
+// functional behavior is unchanged from the
+// previous X2 behavioral model:
 //
-//   * Wishbone data register address is 32'h3000_0004.
+//   * Fixed/default Wishbone data register address is 32'h3000_0004.
 //   * The first three accepted writes after reset are configuration words.
 //   * There is no runtime configuration-restart packet in the V2 RTL.
 //   * Command format after configuration:
 //       [31:30] mode: 00=RESET, 01=READ, 10=COMPUTE, 11=SET
-//       [29:25] row
-//       [24:20] column
-//       [19]    return FSM error/status on Wishbone reads
-//       [18]    COMPUTE: request all 32 result columns
-//       [17]    COMPUTE: final packet / launch marker
-//       [16:8]  reserved
+//       [29:21] row
+//       [20:12] column
+//       [11]    return FSM error/status on Wishbone reads
+//       [10]    COMPUTE: request all 32 columns in the selected CBA bank
+//       [9]     COMPUTE: final packet / launch marker
+//       [8]     reserved
 //       [7:0]   PWM value
-//   * COMPUTE accumulates 1 through 32 packets.  It launches when bit 17 is
+//   * COMPUTE accumulates 1 through 32 packets.  It launches when bit 9 is
 //     set or when packet 32 is accepted.  A non-COMPUTE command discards a
-//     partial COMPUTE burst, matching Wb_slave.sv.
-//   * Result FIFO words match the V2 21-bit TDC result format:
-//       [31:21] 11'b0
-//       [20:19] operation mode
-//       [18:14] column/channel
-//       [13:0]  coarse/fine TDC value
+//     partial COMPUTE burst, matching the V2 command logic.
+//   * Result FIFO words use the 512x512 result format:
+//       [31:25] 7'b0
+//       [24:23] operation mode
+//       [22:14] global column address
+//       [13:8]  coarse count
+//       [7:0]   fine count
 //   * An empty Wishbone read returns 32'hA000_0000 immediately.
 //   * SET and RESET each generate one automatic readback result.
 //   * COMPUTE returns one result for each unique selected column, in ascending
-//     column order.  Bit 18 changes the result mask to all 32 columns.
+//     column order.  Bit 10 returns the 32 columns in the CBA bank containing
+//     the packet's global column address (0:31, 32:63, ... 480:511).
 //
 // The analog memory/TDC response is represented deterministically by
 // cell_level[] and array_state[].  It is suitable for digital/AMS control-path
@@ -62,15 +64,15 @@ module Neuromorphic_X2_wb_beh #(
   input  logic        i_TM,
   output wire         o_TM,
   output logic [1:0]  o_mux_sel,
-  output logic [31:0] o_sl_float,
-  output logic [31:0] o_sl_addr,
-  output logic [31:0] o_sl_data,
-  output logic [31:0] o_bl_addr,
-  output logic [31:0] o_bl_data,
-  output logic [31:0] o_bl_float,
-  output logic [31:0] o_wl_float,
-  output logic [31:0] o_wl_addr,
-  output logic [31:0] o_wl_data
+  output logic [511:0] o_sl_float,
+  output logic [511:0] o_sl_addr,
+  output logic [511:0] o_sl_data,
+  output logic [511:0] o_bl_addr,
+  output logic [511:0] o_bl_data,
+  output logic [511:0] o_bl_float,
+  output logic [511:0] o_wl_float,
+  output logic [511:0] o_wl_addr,
+  output logic [511:0] o_wl_data
 );
 
   localparam logic [1:0] MODE_RESET   = 2'b00;
@@ -84,16 +86,22 @@ module Neuromorphic_X2_wb_beh #(
   localparam logic [2:0] STATUS_COMPUTE_TIMEOUT = 3'b100;
   localparam logic [2:0] STATUS_RESET_FAILED    = 3'b101;
 
+  localparam integer ARRAY_DIM      = 512;
+  localparam integer ARRAY_ADDR_W   = 9;
+  localparam integer CBA_DIM        = 32;
+  localparam integer CBA_COUNT      = 16;
+
   integer r;
   integer c;
   integer scan_i;
 
-  // Abstract 32x32 memory state.
-  logic [31:0] array_state [0:31];
-  logic [13:0] cell_level  [0:1023];
+  // Abstract 512x512 memory state, organized logically as a 16x16 grid of
+  // 32x32 crossbar-array (CBA) tiles.
+  logic [511:0] array_state [0:511];
+  logic [13:0]  cell_level  [0:262143];
 
   // Wishbone command FIFO and result FIFO.  Pointer plus wrap-bit behavior
-  // mirrors the depth-32 synchronous FIFOs in Wb_slave.sv.
+  // mirrors the depth-32 synchronous FIFOs in the V2 RTL.
   logic [31:0] command_q  [0:31];
   logic [31:0] response_q [0:31];
 
@@ -118,23 +126,24 @@ module Neuromorphic_X2_wb_beh #(
   logic [1:0]  tdc_dead_time;
   integer      config_count;
 
-  // Error/status read selection follows Wb_slave.rd_err_addr.
+  // Error/status read selection follows the V2 error-read behavior.
   logic [2:0] status_code;
   logic       error_read_enable;
   logic [7:0] previous_read_pwm;
 
   // V2 variable-length COMPUTE packet accumulator.
-  logic [31:0] compute_row_mask;
-  logic [31:0] compute_col_mask;
+  logic [511:0] compute_row_mask;
+  logic [511:0] compute_col_mask;
   logic        compute_full_column;
-  logic [7:0]  compute_pwm_by_row [0:31];
+  logic [3:0]  compute_column_bank;
+  logic [7:0]  compute_pwm_by_row [0:511];
   integer      compute_packet_count;
 
   // A compact approximation of the active functional decoder controls.
   logic        functional_active;
   logic [1:0]  functional_mode;
-  logic [31:0] functional_row_mask;
-  logic [31:0] functional_col_mask;
+  logic [511:0] functional_row_mask;
+  logic [511:0] functional_col_mask;
 
   // Scan/debug state copied from the current top_module.sv/ScanDebug.v flow.
   logic [15:0] scan_shift;
@@ -158,6 +167,8 @@ module Neuromorphic_X2_wb_beh #(
   wire response_empty;
   wire response_full;
 
+  // Full-word accesses to the single X2 data register are accepted.  A write
+  // stalls by withholding ACK only when the 32-entry command FIFO is full.
   assign selected = wbs_stb_i && wbs_cyc_i &&
                     (wbs_sel_i == 4'hF) &&
                     (wbs_adr_i == ADDR_MATCH);
@@ -176,25 +187,25 @@ module Neuromorphic_X2_wb_beh #(
   assign response_full  = (response_wr_idx == response_rd_idx) &&
                           (response_wr_wrap != response_rd_wrap);
 
-  function automatic [9:0] cell_index;
-    input logic [4:0] row_index;
-    input logic [4:0] col_index;
+  function automatic [17:0] cell_index;
+    input [8:0] row_index;
+    input [8:0] col_index;
     begin
       cell_index = {row_index, col_index};
     end
   endfunction
 
-  function automatic [31:0] onehot5;
-    input logic [4:0] index;
+  function automatic [511:0] onehot9;
+    input [8:0] index;
     begin
-      onehot5 = 32'b0;
-      onehot5[index] = 1'b1;
+      onehot9 = 512'b0;
+      onehot9[index] = 1'b1;
     end
   endfunction
 
   function automatic [13:0] target_midpoint;
-    input logic [15:0] target_a;
-    input logic [15:0] target_b;
+    input [15:0] target_a;
+    input [15:0] target_b;
     logic [16:0] sum;
     begin
       sum = {1'b0, target_a} + {1'b0, target_b};
@@ -203,8 +214,8 @@ module Neuromorphic_X2_wb_beh #(
   endfunction
 
   function automatic [13:0] programmed_level;
-    input logic       set_cell;
-    input logic [7:0] program_value;
+    input       set_cell;
+    input [7:0] program_value;
     logic [14:0] value;
     begin
       if (set_cell)
@@ -225,7 +236,7 @@ module Neuromorphic_X2_wb_beh #(
   endfunction
 
   function automatic [13:0] clamp_count;
-    input logic [16:0] raw_count;
+    input [16:0] raw_count;
     logic [13:0] ceiling;
     begin
       ceiling = timeout_ceiling();
@@ -237,9 +248,9 @@ module Neuromorphic_X2_wb_beh #(
   endfunction
 
   function automatic [13:0] cell_value;
-    input logic [4:0] row_index;
-    input logic [4:0] col_index;
-    input logic [7:0] pwm_value;
+    input [8:0] row_index;
+    input [8:0] col_index;
+    input [7:0] pwm_value;
     logic [16:0] raw_count;
     begin
       raw_count = {3'b0, cell_level[cell_index(row_index, col_index)]} +
@@ -248,13 +259,19 @@ module Neuromorphic_X2_wb_beh #(
     end
   endfunction
 
-  // Exact V2 Wishbone result layout: zero extension of cnt_top.o_tdc_cnt.
+  // 512x512 output format: mode, global column, coarse count, fine count.
+  // Differential signed-column convention:
+  // Physical columns are paired as (2*n, 2*n+1).
+  // Result column 2*n   = TDC[2*n]   - TDC[2*n+1].
+  // Result column 2*n+1 = TDC[2*n+1] - TDC[2*n].
+  // result[22:14] identifies the minuend column.
+  // result[13:0] is the 14-bit signed two's-complement difference.
   function automatic [31:0] result_word;
-    input logic [1:0]  mode;
-    input logic [4:0]  col_index;
-    input logic [13:0] value;
+    input [1:0]  mode;
+    input [8:0]  col_index;
+    input [13:0] value;
     begin
-      result_word = {11'b0, mode, col_index, value};
+      result_word = {7'b0, mode, col_index, value[13:8], value[7:0]};
     end
   endfunction
 
@@ -294,7 +311,7 @@ module Neuromorphic_X2_wb_beh #(
   endtask
 
   task automatic push_response;
-    input logic [31:0] value;
+    input [31:0] value;
     begin
       while (response_full && !wb_rst_i)
         @(posedge wb_clk_i or posedge wb_rst_i);
@@ -309,17 +326,18 @@ module Neuromorphic_X2_wb_beh #(
   task automatic clear_compute_state;
     integer row;
     begin
-      compute_row_mask     = 32'b0;
-      compute_col_mask     = 32'b0;
+      compute_row_mask     = 512'b0;
+      compute_col_mask     = 512'b0;
       compute_full_column  = 1'b0;
+      compute_column_bank  = 4'b0;
       compute_packet_count = 0;
-      for (row = 0; row < 32; row = row + 1)
+      for (row = 0; row < ARRAY_DIM; row = row + 1)
         compute_pwm_by_row[row] = 8'b0;
     end
   endtask
 
   task automatic apply_config;
-    input logic [31:0] packet;
+    input [31:0] packet;
     begin
       case (config_count)
         0: begin
@@ -348,9 +366,9 @@ module Neuromorphic_X2_wb_beh #(
       // Establish a deterministic reset-state read level after the complete
       // configuration triplet.  The physical array remains an analog model.
       if (config_count == CONFIG_WRITES) begin
-        for (r = 0; r < 32; r = r + 1) begin
-          for (c = 0; c < 32; c = c + 1)
-            cell_level[cell_index(r[4:0], c[4:0])] =
+        for (r = 0; r < ARRAY_DIM; r = r + 1) begin
+          for (c = 0; c < ARRAY_DIM; c = c + 1)
+            cell_level[cell_index(r[8:0], c[8:0])] =
                 programmed_level(1'b0, 8'h00);
         end
       end
@@ -360,20 +378,20 @@ module Neuromorphic_X2_wb_beh #(
   endtask
 
   task automatic execute_read;
-    input logic [31:0] packet;
-    logic [4:0] row_index;
-    logic [4:0] col_index;
+    input [31:0] packet;
+    logic [8:0] row_index;
+    logic [8:0] col_index;
     begin
-      row_index = packet[29:25];
-      col_index = packet[24:20];
+      row_index = packet[29:21];
+      col_index = packet[20:12];
 
       clear_compute_state();
       previous_read_pwm  = packet[7:0];
-      error_read_enable  = packet[19];
+      error_read_enable  = packet[11];
       functional_active  = 1'b1;
       functional_mode    = MODE_READ;
-      functional_row_mask = onehot5(row_index);
-      functional_col_mask = onehot5(col_index);
+      functional_row_mask = onehot9(row_index);
+      functional_col_mask = onehot9(col_index);
 
       wait_cycles_or_reset(READ_DELAY);
 
@@ -391,22 +409,22 @@ module Neuromorphic_X2_wb_beh #(
   endtask
 
   task automatic execute_program;
-    input logic [31:0] packet;
-    input logic        set_cell;
-    logic [4:0] row_index;
-    logic [4:0] col_index;
+    input [31:0] packet;
+    input        set_cell;
+    logic [8:0] row_index;
+    logic [8:0] col_index;
     logic [1:0] response_mode;
     begin
-      row_index    = packet[29:25];
-      col_index    = packet[24:20];
+      row_index    = packet[29:21];
+      col_index    = packet[20:12];
       response_mode = set_cell ? MODE_SET : MODE_RESET;
 
       clear_compute_state();
-      error_read_enable   = packet[19];
+      error_read_enable   = packet[11];
       functional_active   = 1'b1;
       functional_mode     = response_mode;
-      functional_row_mask = onehot5(row_index);
-      functional_col_mask = onehot5(col_index);
+      functional_row_mask = onehot9(row_index);
+      functional_col_mask = onehot9(col_index);
 
       wait_cycles_or_reset(PROGRAM_DELAY + int'(no_of_clk_cycles));
 
@@ -430,13 +448,13 @@ module Neuromorphic_X2_wb_beh #(
   endtask
 
   task automatic push_compute_column;
-    input logic [4:0] col_index;
+    input [8:0] col_index;
     integer row;
     logic [16:0] accumulated_value;
     begin
       accumulated_value = 17'b0;
 
-      for (row = 0; row < 32; row = row + 1) begin
+      for (row = 0; row < ARRAY_DIM; row = row + 1) begin
         if (compute_row_mask[row] && array_state[row][col_index])
           accumulated_value = accumulated_value +
                               {9'b0, compute_pwm_by_row[row]};
@@ -450,9 +468,17 @@ module Neuromorphic_X2_wb_beh #(
 
   task automatic launch_compute;
     integer col;
-    logic [31:0] result_mask;
+    integer bank_col;
+    integer bank_base;
+    logic [511:0] result_mask;
     begin
-      result_mask = compute_full_column ? 32'hFFFF_FFFF : compute_col_mask;
+      result_mask = compute_col_mask;
+      if (compute_full_column) begin
+        result_mask = 512'b0;
+        bank_base = int'(compute_column_bank) * CBA_DIM;
+        for (bank_col = 0; bank_col < CBA_DIM; bank_col = bank_col + 1)
+          result_mask[bank_base + bank_col] = 1'b1;
+      end
 
       functional_active   = 1'b1;
       functional_mode     = MODE_COMPUTE;
@@ -464,9 +490,9 @@ module Neuromorphic_X2_wb_beh #(
       if (!wb_rst_i) begin
         // cnt_top returns the lowest-numbered valid channel first.  Clearing
         // each channel produces ascending unique-column order.
-        for (col = 0; col < 32; col = col + 1) begin
+        for (col = 0; col < ARRAY_DIM; col = col + 1) begin
           if (result_mask[col])
-            push_compute_column(col[4:0]);
+            push_compute_column(col[8:0]);
         end
         status_code = STATUS_OK;
       end
@@ -477,22 +503,23 @@ module Neuromorphic_X2_wb_beh #(
   endtask
 
   task automatic accept_compute_packet;
-    input logic [31:0] packet;
-    logic [4:0] row_index;
-    logic [4:0] col_index;
+    input [31:0] packet;
+    logic [8:0] row_index;
+    logic [8:0] col_index;
     logic       launch_now;
     begin
-      row_index = packet[29:25];
-      col_index = packet[24:20];
-      launch_now = packet[17] || (compute_packet_count == 31);
+      row_index = packet[29:21];
+      col_index = packet[20:12];
+      launch_now = packet[9] || (compute_packet_count == 31);
 
-      error_read_enable = packet[19];
+      error_read_enable = packet[11];
       compute_row_mask[row_index] = 1'b1;
       compute_pwm_by_row[row_index] = packet[7:0];
 
-      if (packet[18]) begin
+      if (packet[10]) begin
         compute_full_column = 1'b1;
-        compute_col_mask = 32'hFFFF_FFFF;
+        compute_column_bank = col_index[8:5];
+        compute_col_mask = 512'b0;
       end else if (!compute_full_column) begin
         compute_col_mask[col_index] = 1'b1;
       end
@@ -508,7 +535,7 @@ module Neuromorphic_X2_wb_beh #(
   endtask
 
   task automatic execute_packet;
-    input logic [31:0] packet;
+    input [31:0] packet;
     begin
       if (config_count < CONFIG_WRITES) begin
         apply_config(packet);
@@ -528,11 +555,11 @@ module Neuromorphic_X2_wb_beh #(
 
   task automatic reset_model_state;
     begin
-      for (r = 0; r < 32; r = r + 1) begin
-        array_state[r] = 32'b0;
+      for (r = 0; r < ARRAY_DIM; r = r + 1) begin
+        array_state[r] = 512'b0;
         compute_pwm_by_row[r] = 8'b0;
-        for (c = 0; c < 32; c = c + 1)
-          cell_level[cell_index(r[4:0], c[4:0])] = INITIAL_CELL_LEVEL;
+        for (c = 0; c < ARRAY_DIM; c = c + 1)
+          cell_level[cell_index(r[8:0], c[8:0])] = INITIAL_CELL_LEVEL;
       end
 
       command_rd_idx      = 5'd0;
@@ -554,19 +581,21 @@ module Neuromorphic_X2_wb_beh #(
       error_read_enable   = 1'b0;
       previous_read_pwm   = 8'b0;
 
-      compute_row_mask     = 32'b0;
-      compute_col_mask     = 32'b0;
+      compute_row_mask     = 512'b0;
+      compute_col_mask     = 512'b0;
       compute_full_column  = 1'b0;
+      compute_column_bank  = 4'b0;
       compute_packet_count = 0;
 
       functional_active    = 1'b0;
       functional_mode      = MODE_RESET;
-      functional_row_mask  = 32'b0;
-      functional_col_mask  = 32'b0;
+      functional_row_mask  = 512'b0;
+      functional_col_mask  = 512'b0;
     end
   endtask
 
-  // Wishbone slave interface.
+  // Classic Wishbone subordinate interface.  ACK is pulsed once per accepted
+  // transfer; the initiator must terminate CYC/STB after observing ACK.
   always_ff @(posedge wb_clk_i or posedge wb_rst_i) begin
     if (wb_rst_i) begin
       wbs_ack_o        <= 1'b0;
@@ -594,10 +623,8 @@ module Neuromorphic_X2_wb_beh #(
       end else if (selected && !wbs_we_i && !wbs_ack_o) begin
         if (error_read_enable) begin
           wbs_dat_o <= {29'b0, status_code};
-          wbs_ack_o <= 1'b1;
         end else if (response_empty) begin
           wbs_dat_o <= 32'hA000_0000;
-          wbs_ack_o <= 1'b1;
         end else begin
           wbs_dat_o <= response_q[response_rd_idx];
 
@@ -607,9 +634,9 @@ module Neuromorphic_X2_wb_beh #(
           end else begin
             response_rd_idx <= response_rd_idx + 5'd1;
           end
-
-          wbs_ack_o <= 1'b1;
         end
+
+        wbs_ack_o <= 1'b1;
       end
     end
   end
@@ -695,19 +722,21 @@ module Neuromorphic_X2_wb_beh #(
   // Functional mode exposes the selected row/column masks while an abstract
   // operation is active, without attempting transistor-level array behavior.
   always_comb begin
-    o_wl_float = 32'hFFFF_FFFF;
-    o_bl_float = 32'hFFFF_FFFF;
-    o_sl_float = 32'hFFFF_FFFF;
-    o_wl_data  = 32'b0;
-    o_bl_data  = 32'b0;
-    o_sl_data  = 32'b0;
-    o_wl_addr  = 32'b0;
-    o_bl_addr  = 32'b0;
-    o_sl_addr  = 32'b0;
+    o_wl_float = {ARRAY_DIM{1'b1}};
+    o_bl_float = {ARRAY_DIM{1'b1}};
+    o_sl_float = {ARRAY_DIM{1'b1}};
+    o_wl_data  = {ARRAY_DIM{1'b0}};
+    o_bl_data  = {ARRAY_DIM{1'b0}};
+    o_sl_data  = {ARRAY_DIM{1'b0}};
+    o_wl_addr  = {ARRAY_DIM{1'b0}};
+    o_bl_addr  = {ARRAY_DIM{1'b0}};
+    o_sl_addr  = {ARRAY_DIM{1'b0}};
     o_mux_sel  = 2'b00;
 
     if (scan_test_mode) begin
-      for (scan_i = 0; scan_i < 32; scan_i = scan_i + 1) begin
+      // The legacy scan word has 5-bit selects, so scan mode controls the
+      // local 32-line bank.  Functional commands address all 512 lines.
+      for (scan_i = 0; scan_i < CBA_DIM; scan_i = scan_i + 1) begin
         o_wl_addr[scan_i]  = (scan_i == int'(scan_wl_sel_d));
         o_wl_float[scan_i] = ~o_wl_addr[scan_i];
         o_wl_data[scan_i]  = o_wl_addr[scan_i];
@@ -757,9 +786,9 @@ module Neuromorphic_X2_wb_beh #(
 
 endmodule
 
-// Optional compatibility wrapper matching the old behavioral-model delivery.
-// Define NEUROMORPHIC_X2_WB_BEH_AS_RTL only when the behavioral model should
-// replace the RTL module named Neuromorphic_X2_wb.
+// Optional compatibility wrapper for flows that expect the module name
+// Neuromorphic_X2_wb.  The macro avoids colliding with a separately compiled
+// synthesizable implementation that already provides that module.
 `ifdef NEUROMORPHIC_X2_WB_BEH_AS_RTL
 module Neuromorphic_X2_wb #(
   parameter logic [31:0] ADDR_MATCH         = 32'h3000_0004,
@@ -784,15 +813,15 @@ module Neuromorphic_X2_wb #(
   input  logic        i_TM,
   output wire         o_TM,
   output logic [1:0]  o_mux_sel,
-  output logic [31:0] o_sl_float,
-  output logic [31:0] o_sl_addr,
-  output logic [31:0] o_sl_data,
-  output logic [31:0] o_bl_addr,
-  output logic [31:0] o_bl_data,
-  output logic [31:0] o_bl_float,
-  output logic [31:0] o_wl_float,
-  output logic [31:0] o_wl_addr,
-  output logic [31:0] o_wl_data
+  output logic [511:0] o_sl_float,
+  output logic [511:0] o_sl_addr,
+  output logic [511:0] o_sl_data,
+  output logic [511:0] o_bl_addr,
+  output logic [511:0] o_bl_data,
+  output logic [511:0] o_bl_float,
+  output logic [511:0] o_wl_float,
+  output logic [511:0] o_wl_addr,
+  output logic [511:0] o_wl_data
 );
 
   Neuromorphic_X2_wb_beh #(
@@ -802,7 +831,7 @@ module Neuromorphic_X2_wb #(
     .COMPUTE_DELAY(COMPUTE_DELAY),
     .CONFIG_WRITES(CONFIG_WRITES),
     .INITIAL_CELL_LEVEL(INITIAL_CELL_LEVEL)
-  ) wb_black_box_i (
+  ) wb_behavior_i (
     .wb_clk_i(wb_clk_i),
     .wb_rst_i(wb_rst_i),
     .wbs_stb_i(wbs_stb_i),
