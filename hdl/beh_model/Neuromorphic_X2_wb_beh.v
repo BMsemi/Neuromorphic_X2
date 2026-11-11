@@ -1,20 +1,20 @@
 `timescale 1ns/1ps
 
 // -----------------------------------------------------------------------------
-// Behavioral model for the September 2026 V2 RTL.
+// Behavioral model for the September 2026 V2 RTL with a Wishbone interface.
 //
-// This model exposes a generic 32-bit AHB subordinate interface.  The X2
+// This model exposes a classic 32-bit Wishbone subordinate interface.  The X2
 // functional behavior is unchanged from the
 // previous X2 behavioral model:
 //
-//   * Fixed/default AHB data register address is 32'hE000_0004.
+//   * Fixed/default Wishbone data register address is 32'h3000_0004.
 //   * The first three accepted writes after reset are configuration words.
 //   * There is no runtime configuration-restart packet in the V2 RTL.
 //   * Command format after configuration:
 //       [31:30] mode: 00=RESET, 01=READ, 10=COMPUTE, 11=SET
 //       [29:21] row
 //       [20:12] column
-//       [11]    return FSM error/status on AHB reads
+//       [11]    return FSM error/status on Wishbone reads
 //       [10]    COMPUTE: request all 32 columns in the selected CBA bank
 //       [9]     COMPUTE: final packet / launch marker
 //       [8]     reserved
@@ -28,7 +28,7 @@
 //       [22:14] global column address
 //       [13:8]  coarse count
 //       [7:0]   fine count
-//   * An empty AHB read returns 32'hA000_0000 immediately.
+//   * An empty Wishbone read returns 32'hA000_0000 immediately.
 //   * SET and RESET each generate one automatic readback result.
 //   * COMPUTE returns one result for each unique selected column, in ascending
 //     column order.  Bit 10 returns the 32 columns in the CBA bank containing
@@ -40,30 +40,24 @@
 // the physical implementation and extracted parasitics.
 // -----------------------------------------------------------------------------
 
-module Neuromorphic_X2_ahb_beh #(
-  parameter logic [31:0] ADDR_MATCH         = 32'hE000_0004,
+module Neuromorphic_X2_wb_beh #(
+  parameter logic [31:0] ADDR_MATCH         = 32'h3000_0004,
   parameter integer      READ_DELAY         = 160,
   parameter integer      PROGRAM_DELAY      = 360,
   parameter integer      COMPUTE_DELAY      = 450,
   parameter integer      CONFIG_WRITES      = 3,
   parameter logic [13:0] INITIAL_CELL_LEVEL = 14'h0E23
 )(
-  input  logic        HCLK,
-  input  logic        HRESETn,
-  input  logic        HSEL,
-  input  logic [31:0] HADDR,
-  input  logic [1:0]  HTRANS,
-  input  logic        HWRITE,
-  input  logic [2:0]  HSIZE,
-  input  logic [2:0]  HBURST,
-  input  logic [3:0]  HPROT,
-  input  logic [3:0]  HMASTER,
-  input  logic        HMASTLOCK,
-  input  logic [31:0] HWDATA,
-  input  logic        HREADY,
-  output logic [31:0] HRDATA,
-  output logic        HREADYOUT,
-  output logic [1:0]  HRESP,
+  input  logic        wb_clk_i,
+  input  logic        wb_rst_i,
+  input  logic        wbs_stb_i,
+  input  logic        wbs_cyc_i,
+  input  logic        wbs_we_i,
+  input  logic [3:0]  wbs_sel_i,
+  input  logic [31:0] wbs_dat_i,
+  input  logic [31:0] wbs_adr_i,
+  output logic [31:0] wbs_dat_o,
+  output logic        wbs_ack_o,
 
   input  logic        i_scan_si1,
   input  logic        i_scan_se1,
@@ -92,10 +86,6 @@ module Neuromorphic_X2_ahb_beh #(
   localparam logic [2:0] STATUS_COMPUTE_TIMEOUT = 3'b100;
   localparam logic [2:0] STATUS_RESET_FAILED    = 3'b101;
 
-  localparam logic [1:0] AHB_RESP_OKAY  = 2'b00;
-  localparam logic [1:0] AHB_RESP_ERROR = 2'b01;
-  localparam logic [2:0] AHB_SIZE_WORD  = 3'b010;
-
   localparam integer ARRAY_DIM      = 512;
   localparam integer ARRAY_ADDR_W   = 9;
   localparam integer CBA_DIM        = 32;
@@ -110,7 +100,7 @@ module Neuromorphic_X2_ahb_beh #(
   logic [511:0] array_state [0:511];
   logic [13:0]  cell_level  [0:262143];
 
-  // AHB command FIFO and result FIFO.  Pointer plus wrap-bit behavior
+  // Wishbone command FIFO and result FIFO.  Pointer plus wrap-bit behavior
   // mirrors the depth-32 synchronous FIFOs in the V2 RTL.
   logic [31:0] command_q  [0:31];
   logic [31:0] response_q [0:31];
@@ -170,29 +160,18 @@ module Neuromorphic_X2_ahb_beh #(
   logic [4:0]  scan_bl_sel_d;
   logic [4:0]  scan_wl_sel_d;
 
-  logic        ahb_transfer_pending;
-  logic        ahb_error_second_cycle;
-  logic [31:0] ahb_addr_q;
-  logic        ahb_write_q;
-  logic [2:0]  ahb_size_q;
-
-  wire ahb_address_phase;
-  wire ahb_access_valid;
-  wire ahb_reset;
+  wire selected;
   wire scan_test_mode;
   wire command_empty;
   wire command_full;
   wire response_empty;
   wire response_full;
 
-  assign ahb_reset = ~HRESETn;
-
-  // HTRANS[1] selects NONSEQ and SEQ transfers.  Address/control are accepted
-  // only when the upstream bus is ready, then held internally throughout the
-  // AHB data phase and any inserted wait states.
-  assign ahb_address_phase = HSEL && HTRANS[1] && HREADY;
-  assign ahb_access_valid  = (ahb_addr_q == ADDR_MATCH) &&
-                             (ahb_size_q == AHB_SIZE_WORD);
+  // Full-word accesses to the single X2 data register are accepted.  A write
+  // stalls by withholding ACK only when the 32-entry command FIFO is full.
+  assign selected = wbs_stb_i && wbs_cyc_i &&
+                    (wbs_sel_i == 4'hF) &&
+                    (wbs_adr_i == ADDR_MATCH);
 
   // Case equality makes omitted named ports safely inactive.
   assign scan_test_mode = (i_TM === 1'b1);
@@ -209,15 +188,15 @@ module Neuromorphic_X2_ahb_beh #(
                           (response_wr_wrap != response_rd_wrap);
 
   function automatic [17:0] cell_index;
-    input logic [8:0] row_index;
-    input logic [8:0] col_index;
+    input [8:0] row_index;
+    input [8:0] col_index;
     begin
       cell_index = {row_index, col_index};
     end
   endfunction
 
   function automatic [511:0] onehot9;
-    input logic [8:0] index;
+    input [8:0] index;
     begin
       onehot9 = 512'b0;
       onehot9[index] = 1'b1;
@@ -225,8 +204,8 @@ module Neuromorphic_X2_ahb_beh #(
   endfunction
 
   function automatic [13:0] target_midpoint;
-    input logic [15:0] target_a;
-    input logic [15:0] target_b;
+    input [15:0] target_a;
+    input [15:0] target_b;
     logic [16:0] sum;
     begin
       sum = {1'b0, target_a} + {1'b0, target_b};
@@ -235,8 +214,8 @@ module Neuromorphic_X2_ahb_beh #(
   endfunction
 
   function automatic [13:0] programmed_level;
-    input logic       set_cell;
-    input logic [7:0] program_value;
+    input       set_cell;
+    input [7:0] program_value;
     logic [14:0] value;
     begin
       if (set_cell)
@@ -257,7 +236,7 @@ module Neuromorphic_X2_ahb_beh #(
   endfunction
 
   function automatic [13:0] clamp_count;
-    input logic [16:0] raw_count;
+    input [16:0] raw_count;
     logic [13:0] ceiling;
     begin
       ceiling = timeout_ceiling();
@@ -269,9 +248,9 @@ module Neuromorphic_X2_ahb_beh #(
   endfunction
 
   function automatic [13:0] cell_value;
-    input logic [8:0] row_index;
-    input logic [8:0] col_index;
-    input logic [7:0] pwm_value;
+    input [8:0] row_index;
+    input [8:0] col_index;
+    input [7:0] pwm_value;
     logic [16:0] raw_count;
     begin
       raw_count = {3'b0, cell_level[cell_index(row_index, col_index)]} +
@@ -288,9 +267,9 @@ module Neuromorphic_X2_ahb_beh #(
   // result[22:14] identifies the minuend column.
   // result[13:0] is the 14-bit signed two's-complement difference.
   function automatic [31:0] result_word;
-    input logic [1:0]  mode;
-    input logic [8:0]  col_index;
-    input logic [13:0] value;
+    input [1:0]  mode;
+    input [8:0]  col_index;
+    input [13:0] value;
     begin
       result_word = {7'b0, mode, col_index, value[13:8], value[7:0]};
     end
@@ -301,9 +280,9 @@ module Neuromorphic_X2_ahb_beh #(
     integer n;
     begin
       n = 0;
-      while ((n < cycles) && !ahb_reset) begin
-        @(posedge HCLK or posedge ahb_reset);
-        if (!ahb_reset)
+      while ((n < cycles) && !wb_rst_i) begin
+        @(posedge wb_clk_i or posedge wb_rst_i);
+        if (!wb_rst_i)
           n = n + 1;
       end
     end
@@ -332,12 +311,12 @@ module Neuromorphic_X2_ahb_beh #(
   endtask
 
   task automatic push_response;
-    input logic [31:0] value;
+    input [31:0] value;
     begin
-      while (response_full && !ahb_reset)
-        @(posedge HCLK or posedge ahb_reset);
+      while (response_full && !wb_rst_i)
+        @(posedge wb_clk_i or posedge wb_rst_i);
 
-      if (!ahb_reset) begin
+      if (!wb_rst_i) begin
         response_q[response_wr_idx] = value;
         advance_response_write();
       end
@@ -358,7 +337,7 @@ module Neuromorphic_X2_ahb_beh #(
   endtask
 
   task automatic apply_config;
-    input logic [31:0] packet;
+    input [31:0] packet;
     begin
       case (config_count)
         0: begin
@@ -399,7 +378,7 @@ module Neuromorphic_X2_ahb_beh #(
   endtask
 
   task automatic execute_read;
-    input logic [31:0] packet;
+    input [31:0] packet;
     logic [8:0] row_index;
     logic [8:0] col_index;
     begin
@@ -416,7 +395,7 @@ module Neuromorphic_X2_ahb_beh #(
 
       wait_cycles_or_reset(READ_DELAY);
 
-      if (!ahb_reset) begin
+      if (!wb_rst_i) begin
         push_response(result_word(MODE_READ,
                                   col_index,
                                   cell_value(row_index,
@@ -430,8 +409,8 @@ module Neuromorphic_X2_ahb_beh #(
   endtask
 
   task automatic execute_program;
-    input logic [31:0] packet;
-    input logic        set_cell;
+    input [31:0] packet;
+    input        set_cell;
     logic [8:0] row_index;
     logic [8:0] col_index;
     logic [1:0] response_mode;
@@ -449,7 +428,7 @@ module Neuromorphic_X2_ahb_beh #(
 
       wait_cycles_or_reset(PROGRAM_DELAY + int'(no_of_clk_cycles));
 
-      if (!ahb_reset) begin
+      if (!wb_rst_i) begin
         array_state[row_index][col_index] = set_cell;
         cell_level[cell_index(row_index, col_index)] =
             programmed_level(set_cell, packet[7:0]);
@@ -469,7 +448,7 @@ module Neuromorphic_X2_ahb_beh #(
   endtask
 
   task automatic push_compute_column;
-    input logic [8:0] col_index;
+    input [8:0] col_index;
     integer row;
     logic [16:0] accumulated_value;
     begin
@@ -508,7 +487,7 @@ module Neuromorphic_X2_ahb_beh #(
 
       wait_cycles_or_reset(COMPUTE_DELAY);
 
-      if (!ahb_reset) begin
+      if (!wb_rst_i) begin
         // cnt_top returns the lowest-numbered valid channel first.  Clearing
         // each channel produces ascending unique-column order.
         for (col = 0; col < ARRAY_DIM; col = col + 1) begin
@@ -524,7 +503,7 @@ module Neuromorphic_X2_ahb_beh #(
   endtask
 
   task automatic accept_compute_packet;
-    input logic [31:0] packet;
+    input [31:0] packet;
     logic [8:0] row_index;
     logic [8:0] col_index;
     logic       launch_now;
@@ -556,7 +535,7 @@ module Neuromorphic_X2_ahb_beh #(
   endtask
 
   task automatic execute_packet;
-    input logic [31:0] packet;
+    input [31:0] packet;
     begin
       if (config_count < CONFIG_WRITES) begin
         apply_config(packet);
@@ -615,110 +594,74 @@ module Neuromorphic_X2_ahb_beh #(
     end
   endtask
 
-  // AHB subordinate interface.  Address/control are captured in the AHB
-  // address phase.  HWDATA is intentionally consumed in the following data
-  // phase; sampling it with HADDR would violate the pipelined AHB protocol.
-  // A successful access inserts one wait state.  A write waits longer only
-  // when the command FIFO is full.
-  always_ff @(posedge HCLK or negedge HRESETn) begin
-    if (!HRESETn) begin
-      HRDATA                  <= 32'b0;
-      HREADYOUT               <= 1'b1;
-      HRESP                   <= AHB_RESP_OKAY;
-      ahb_transfer_pending    <= 1'b0;
-      ahb_error_second_cycle  <= 1'b0;
-      ahb_addr_q              <= 32'b0;
-      ahb_write_q             <= 1'b0;
-      ahb_size_q              <= AHB_SIZE_WORD;
-      command_wr_idx          <= 5'd0;
-      command_wr_wrap         <= 1'b0;
-      response_rd_idx         <= 5'd0;
-      response_rd_wrap        <= 1'b0;
+  // Classic Wishbone subordinate interface.  ACK is pulsed once per accepted
+  // transfer; the initiator must terminate CYC/STB after observing ACK.
+  always_ff @(posedge wb_clk_i or posedge wb_rst_i) begin
+    if (wb_rst_i) begin
+      wbs_ack_o        <= 1'b0;
+      wbs_dat_o        <= 32'b0;
+      command_wr_idx   <= 5'd0;
+      command_wr_wrap  <= 1'b0;
+      response_rd_idx  <= 5'd0;
+      response_rd_wrap <= 1'b0;
     end else begin
-      if (ahb_error_second_cycle) begin
-        // The interface uses the full two-bit AHB response encoding. ERROR is a
-        // two-cycle response: first HREADYOUT low, then HREADYOUT high.
-        HRESP                  <= AHB_RESP_ERROR;
-        HREADYOUT              <= 1'b1;
-        ahb_error_second_cycle <= 1'b0;
-      end else if (ahb_transfer_pending) begin
-        HRESP     <= AHB_RESP_OKAY;
-        HREADYOUT <= 1'b0;
+      wbs_ack_o <= 1'b0;
 
-        if (!ahb_access_valid) begin
-          HRDATA                 <= 32'b0;
-          HRESP                  <= AHB_RESP_ERROR;
-          ahb_transfer_pending   <= 1'b0;
-          ahb_error_second_cycle <= 1'b1;
-        end else if (ahb_write_q) begin
-          if (!command_full) begin
-            command_q[command_wr_idx] <= HWDATA;
+      if (selected && wbs_we_i && !wbs_ack_o) begin
+        if (!command_full) begin
+          command_q[command_wr_idx] <= wbs_dat_i;
 
-            if (command_wr_idx == 5'd31) begin
-              command_wr_idx  <= 5'd0;
-              command_wr_wrap <= ~command_wr_wrap;
-            end else begin
-              command_wr_idx <= command_wr_idx + 5'd1;
-            end
-
-            ahb_transfer_pending <= 1'b0;
-            HREADYOUT             <= 1'b1;
-          end
-        end else begin
-          if (error_read_enable) begin
-            HRDATA <= {29'b0, status_code};
-          end else if (response_empty) begin
-            HRDATA <= 32'hA000_0000;
+          if (command_wr_idx == 5'd31) begin
+            command_wr_idx  <= 5'd0;
+            command_wr_wrap <= ~command_wr_wrap;
           end else begin
-            HRDATA <= response_q[response_rd_idx];
-
-            if (response_rd_idx == 5'd31) begin
-              response_rd_idx  <= 5'd0;
-              response_rd_wrap <= ~response_rd_wrap;
-            end else begin
-              response_rd_idx <= response_rd_idx + 5'd1;
-            end
+            command_wr_idx <= command_wr_idx + 5'd1;
           end
 
-          ahb_transfer_pending <= 1'b0;
-          HREADYOUT             <= 1'b1;
+          wbs_ack_o <= 1'b1;
         end
-      end else begin
-        HRESP     <= AHB_RESP_OKAY;
-        HREADYOUT <= 1'b1;
+      end else if (selected && !wbs_we_i && !wbs_ack_o) begin
+        if (error_read_enable) begin
+          wbs_dat_o <= {29'b0, status_code};
+        end else if (response_empty) begin
+          wbs_dat_o <= 32'hA000_0000;
+        end else begin
+          wbs_dat_o <= response_q[response_rd_idx];
 
-        if (ahb_address_phase) begin
-          ahb_addr_q           <= HADDR;
-          ahb_write_q          <= HWRITE;
-          ahb_size_q           <= HSIZE;
-          ahb_transfer_pending <= 1'b1;
-          HREADYOUT            <= 1'b0;
+          if (response_rd_idx == 5'd31) begin
+            response_rd_idx  <= 5'd0;
+            response_rd_wrap <= ~response_rd_wrap;
+          end else begin
+            response_rd_idx <= response_rd_idx + 5'd1;
+          end
         end
+
+        wbs_ack_o <= 1'b1;
       end
     end
   end
 
-  // Sequential command executor.  The AHB command FIFO remains able to
+  // Sequential command executor.  The Wishbone command FIFO remains able to
   // accept writes while an operation delay is in progress.
   initial begin
     reset_model_state();
 
     forever begin
-      @(posedge HCLK or posedge ahb_reset);
+      @(posedge wb_clk_i or posedge wb_rst_i);
 
-      if (ahb_reset) begin
+      if (wb_rst_i) begin
         reset_model_state();
       end else if (!command_empty) begin
         execute_packet(command_q[command_rd_idx]);
-        if (!ahb_reset)
+        if (!wb_rst_i)
           advance_command_read();
       end
     end
   end
 
   // Scan shift/capture behavior from the latest top_module.sv.
-  always_ff @(posedge HCLK) begin
-    if (ahb_reset) begin
+  always_ff @(posedge wb_clk_i) begin
+    if (wb_rst_i) begin
       scan_shift       <= 16'b0;
       scan_word        <= 16'b0;
       scan_word_valid  <= 1'b0;
@@ -750,8 +693,8 @@ module Neuromorphic_X2_ahb_beh #(
     end
   end
 
-  always_ff @(posedge HCLK) begin
-    if (ahb_reset) begin
+  always_ff @(posedge wb_clk_i) begin
+    if (wb_rst_i) begin
       scan_op_set   <= 1'b0;
       scan_sl_sel   <= 5'd0;
       scan_bl_sel   <= 5'd0;
@@ -843,34 +786,28 @@ module Neuromorphic_X2_ahb_beh #(
 
 endmodule
 
-// Optional compatibility wrapper for flows that expect an RTL-style AHB top.
-// Define NEUROMORPHIC_X2_AHB_BEH_AS_RTL when this behavioral model should
-// provide the module named Neuromorphic_X2_ahb.
-`ifdef NEUROMORPHIC_X2_AHB_BEH_AS_RTL
-module Neuromorphic_X2_ahb #(
-  parameter logic [31:0] ADDR_MATCH         = 32'hE000_0004,
+// Optional compatibility wrapper for flows that expect the module name
+// Neuromorphic_X2_wb.  The macro avoids colliding with a separately compiled
+// synthesizable implementation that already provides that module.
+`ifdef NEUROMORPHIC_X2_WB_BEH_AS_RTL
+module Neuromorphic_X2_wb #(
+  parameter logic [31:0] ADDR_MATCH         = 32'h3000_0004,
   parameter integer      READ_DELAY         = 160,
   parameter integer      PROGRAM_DELAY      = 360,
   parameter integer      COMPUTE_DELAY      = 450,
   parameter integer      CONFIG_WRITES      = 3,
   parameter logic [13:0] INITIAL_CELL_LEVEL = 14'h0E23
 )(
-  input  logic        HCLK,
-  input  logic        HRESETn,
-  input  logic        HSEL,
-  input  logic [31:0] HADDR,
-  input  logic [1:0]  HTRANS,
-  input  logic        HWRITE,
-  input  logic [2:0]  HSIZE,
-  input  logic [2:0]  HBURST,
-  input  logic [3:0]  HPROT,
-  input  logic [3:0]  HMASTER,
-  input  logic        HMASTLOCK,
-  input  logic [31:0] HWDATA,
-  input  logic        HREADY,
-  output logic [31:0] HRDATA,
-  output logic        HREADYOUT,
-  output logic [1:0]  HRESP,
+  input  logic        wb_clk_i,
+  input  logic        wb_rst_i,
+  input  logic        wbs_stb_i,
+  input  logic        wbs_cyc_i,
+  input  logic        wbs_we_i,
+  input  logic [3:0]  wbs_sel_i,
+  input  logic [31:0] wbs_dat_i,
+  input  logic [31:0] wbs_adr_i,
+  output logic [31:0] wbs_dat_o,
+  output logic        wbs_ack_o,
   input  logic        i_scan_si1,
   input  logic        i_scan_se1,
   input  logic        i_TM,
@@ -887,30 +824,24 @@ module Neuromorphic_X2_ahb #(
   output logic [511:0] o_wl_data
 );
 
-  Neuromorphic_X2_ahb_beh #(
+  Neuromorphic_X2_wb_beh #(
     .ADDR_MATCH(ADDR_MATCH),
     .READ_DELAY(READ_DELAY),
     .PROGRAM_DELAY(PROGRAM_DELAY),
     .COMPUTE_DELAY(COMPUTE_DELAY),
     .CONFIG_WRITES(CONFIG_WRITES),
     .INITIAL_CELL_LEVEL(INITIAL_CELL_LEVEL)
-  ) ahb_behavior_i (
-    .HCLK(HCLK),
-    .HRESETn(HRESETn),
-    .HSEL(HSEL),
-    .HADDR(HADDR),
-    .HTRANS(HTRANS),
-    .HWRITE(HWRITE),
-    .HSIZE(HSIZE),
-    .HBURST(HBURST),
-    .HPROT(HPROT),
-    .HMASTER(HMASTER),
-    .HMASTLOCK(HMASTLOCK),
-    .HWDATA(HWDATA),
-    .HREADY(HREADY),
-    .HRDATA(HRDATA),
-    .HREADYOUT(HREADYOUT),
-    .HRESP(HRESP),
+  ) wb_behavior_i (
+    .wb_clk_i(wb_clk_i),
+    .wb_rst_i(wb_rst_i),
+    .wbs_stb_i(wbs_stb_i),
+    .wbs_cyc_i(wbs_cyc_i),
+    .wbs_we_i(wbs_we_i),
+    .wbs_sel_i(wbs_sel_i),
+    .wbs_dat_i(wbs_dat_i),
+    .wbs_adr_i(wbs_adr_i),
+    .wbs_dat_o(wbs_dat_o),
+    .wbs_ack_o(wbs_ack_o),
     .i_scan_si1(i_scan_si1),
     .i_scan_se1(i_scan_se1),
     .i_TM(i_TM),
