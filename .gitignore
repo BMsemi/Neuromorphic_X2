@@ -12,6 +12,7 @@
 /dependencies
 /mgmt_core_wrapper
 /logs
+
 # macOS Finder metadata
 .DS_Store
 **/.DS_Store

@@ -24,4 +24,9 @@ info:
   technology: sky130
   digital_supply_voltage: 1.8
   analog_supply_voltage: 1.8
-registers: []
+registers:
+  - name: X2_DATA
+    address: 0x30000004
+    width: 32
+    access: read-write
+    description: Full-word Wishbone configuration, command, status, and result register

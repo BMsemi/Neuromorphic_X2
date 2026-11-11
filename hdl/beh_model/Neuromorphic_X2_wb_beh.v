@@ -786,9 +786,12 @@ module Neuromorphic_X2_wb_beh #(
 
 endmodule
 
-// Optional compatibility wrapper for flows that expect the module name
-// Neuromorphic_X2_wb.  The macro avoids colliding with a separately compiled
-// synthesizable implementation that already provides that module.
+// Optional hard-macro-compatible functional wrapper.  Its port names and
+// widths match the Neuromorphic_X2_wb LEF/LIB/GDS interface so a simulation
+// can replace the physical macro without changing the Wishbone connections.
+// Analog electrical behavior, user-clock logic, and the physical scan chains
+// are intentionally not modeled by this wrapper.  The macro avoids colliding
+// with a separately compiled implementation that already provides this name.
 `ifdef NEUROMORPHIC_X2_WB_BEH_AS_RTL
 module Neuromorphic_X2_wb #(
   parameter logic [31:0] ADDR_MATCH         = 32'h3000_0004,
@@ -806,23 +809,49 @@ module Neuromorphic_X2_wb #(
   input  logic [3:0]  wbs_sel_i,
   input  logic [31:0] wbs_dat_i,
   input  logic [31:0] wbs_adr_i,
-  output logic [31:0] wbs_dat_o,
-  output logic        wbs_ack_o,
-  input  logic        i_scan_si1,
-  input  logic        i_scan_se1,
-  input  logic        i_TM,
-  output wire         o_TM,
-  output logic [1:0]  o_mux_sel,
-  output logic [511:0] o_sl_float,
-  output logic [511:0] o_sl_addr,
-  output logic [511:0] o_sl_data,
-  output logic [511:0] o_bl_addr,
-  output logic [511:0] o_bl_data,
-  output logic [511:0] o_bl_float,
-  output logic [511:0] o_wl_float,
-  output logic [511:0] o_wl_addr,
-  output logic [511:0] o_wl_data
+  output wire [31:0]  wbs_dat_o,
+  output wire         wbs_ack_o,
+
+  input  logic        user_clk,
+  input  logic        user_rst,
+  input  logic        ScanInCC,
+  input  logic        ScanInDL,
+  input  logic        ScanInDR,
+  output wire         ScanOutCC,
+  input  logic        TM,
+
+  inout  wire         VSS,
+  inout  wire         VDDA1,
+  inout  wire         VDDA2,
+  inout  wire         VDDC1,
+  inout  wire         VDDC2,
+  input  wire         Vcc_wl_read,
+  input  wire         Vcc_wl_set,
+  input  wire         Vcc_wl_reset,
+  input  wire         Vcc_set,
+  input  wire         Vcc_read,
+  input  wire         dc_bias,
+  input  wire         Iref,
+  input  wire         Vbias,
+  input  wire         Vcomp,
+  input  wire         Bias_comp2
 );
+
+  wire         unused_tm;
+  wire [1:0]   unused_mux_sel;
+  wire [511:0] unused_sl_float;
+  wire [511:0] unused_sl_addr;
+  wire [511:0] unused_sl_data;
+  wire [511:0] unused_bl_addr;
+  wire [511:0] unused_bl_data;
+  wire [511:0] unused_bl_float;
+  wire [511:0] unused_wl_float;
+  wire [511:0] unused_wl_addr;
+  wire [511:0] unused_wl_data;
+
+  // The physical scan chains and analog pins are outside the scope of the
+  // digital functional model.  Keep the scan output deterministic.
+  assign ScanOutCC = 1'b0;
 
   Neuromorphic_X2_wb_beh #(
     .ADDR_MATCH(ADDR_MATCH),
@@ -842,20 +871,20 @@ module Neuromorphic_X2_wb #(
     .wbs_adr_i(wbs_adr_i),
     .wbs_dat_o(wbs_dat_o),
     .wbs_ack_o(wbs_ack_o),
-    .i_scan_si1(i_scan_si1),
-    .i_scan_se1(i_scan_se1),
-    .i_TM(i_TM),
-    .o_TM(o_TM),
-    .o_mux_sel(o_mux_sel),
-    .o_sl_float(o_sl_float),
-    .o_sl_addr(o_sl_addr),
-    .o_sl_data(o_sl_data),
-    .o_bl_addr(o_bl_addr),
-    .o_bl_data(o_bl_data),
-    .o_bl_float(o_bl_float),
-    .o_wl_float(o_wl_float),
-    .o_wl_addr(o_wl_addr),
-    .o_wl_data(o_wl_data)
+    .i_scan_si1(1'b0),
+    .i_scan_se1(1'b0),
+    .i_TM(1'b0),
+    .o_TM(unused_tm),
+    .o_mux_sel(unused_mux_sel),
+    .o_sl_float(unused_sl_float),
+    .o_sl_addr(unused_sl_addr),
+    .o_sl_data(unused_sl_data),
+    .o_bl_addr(unused_bl_addr),
+    .o_bl_data(unused_bl_data),
+    .o_bl_float(unused_bl_float),
+    .o_wl_float(unused_wl_float),
+    .o_wl_addr(unused_wl_addr),
+    .o_wl_data(unused_wl_data)
   );
 
 endmodule

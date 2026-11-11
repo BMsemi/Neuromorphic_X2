@@ -1,0 +1,19 @@
+# Text source and documentation
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.v text eol=lf
+*.sv text eol=lf
+*.vh text eol=lf
+*.lef text eol=lf
+*.lib text eol=lf
+
+# Binary design collateral and customer documents
+*.gds binary
+*.pdf binary
+*.docx binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.DS_Store binary
