@@ -1,0 +1,5 @@
+raw_word,column,pwm,coarse_count,fine_count,measured_g30_minus_g31_uS,predicted_g30_minus_g31_uS,validity,meaning
+0x0007C846,31,0xFF,8,70,129.8129,116.1370,VALID,column_30_more_conductive
+0x0007D019,31,0xFF,16,25,14.6274,20.4074,VALID,column_30_slightly_more_conductive
+0x0007D243,31,0xFF,18,67,3.0937,-3.5250,VALID_NEAR_ZERO,near_zero_noise_can_change_predicted_sign
+0x0007D210,31,0xFF,18,16,-4.8827,-3.5250,VALID,column_31_more_conductive

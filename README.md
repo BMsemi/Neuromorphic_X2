@@ -43,6 +43,9 @@ DRC, power-integrity analysis or silicon characterization.
 | `doc/Process_to_write_to_ReRAM_CIM.png` | Command/result process diagram |
 | `doc/reram_cim_process.jpg` | Functional data-flow diagram |
 | `doc/symbol.jpg` | Hard-macro interface symbol |
+| `adc_lookup_and_golden_vectors.md` | Standalone ADC/TDC calibration and vector explanation |
+| `coarse_conductance_lookup.csv` | Machine-readable coarse-count conductance lookup for the supplied calibration |
+| `golden_vectors.csv` | Machine-readable ADC/TDC golden vectors |
 | `doc/timing_diagram.jpg` | Wishbone timing diagram |
 | `doc/ReRAM_array_multibit_measured_data.pdf` | ReRAM measurement reference |
 | `Neuromorphic_X2.yaml` | IP metadata and register declaration |
@@ -157,6 +160,70 @@ verification and do not model analog voltage, current, slew or loading.
 | `o_wl_data`, `o_bl_data`, `o_sl_data` | Abstract driven-line values |
 | `o_wl_float`, `o_bl_float`, `o_sl_float` | Abstract floating-line masks |
 | `o_mux_sel` | Abstract mode-dependent mux selection |
+
+## Electrical nominal reference and power/reset behavior
+
+The nominal pin values supplied for customer integration are listed below.
+They are hardware integration references; the behavioral model does not
+electrically drive, measure or validate these voltages.
+
+| Pin | Direction | Nominal |
+|---|---|---:|
+| `VSS` | INOUT | 0.00 V |
+| `VDDA1` | INOUT | 3.00 V |
+| `VDDA2` | INOUT | 1.80 V |
+| `VDDC1` | INOUT | 1.80 V |
+| `VDDC2` / `VCCD2` | INOUT / alias | 1.80 V |
+| `VCC_SNEAK` | INPUT | 1.50 V |
+| `Vcc_read` | INPUT | 0.30 V |
+| `Vcc_set` | INPUT | 3.30 V |
+| `Vcc_wl_read` | INPUT | 0.70 V |
+| `Vcc_wl_set` | INPUT | 1.80 V |
+| `Vcc_wl_reset` | INPUT | 2.60 V |
+| `dc_bias` | INPUT | 1.50 V |
+| `Iref` | INPUT | 1.00 V |
+| `Vbias` | INPUT | 1.60 V |
+| `Vcomp` | INPUT | 0.90 V |
+| `Bias_comp2` | INPUT | 0.60 V |
+
+Where a customer test applies a ±50 mV tolerance, it means the applied value
+is checked relative to the corresponding nominal value in this table:
+
+```text
+accepted target range = nominal - 0.05 V through nominal + 0.05 V
+```
+
+This tolerance statement is not a substitute for absolute-maximum, operating,
+ramp-rate or noise specifications. `VSS` is the ground reference and must not
+be interpreted as requiring a negative supply. The authoritative electrical
+limits must come from the released hard-macro electrical/signoff collateral.
+
+### Power sequencing
+
+The current behavioral model has no analog power-state machine. It does not
+enforce a rail order, ramp rate, settling delay or bias-enable sequence, and
+changing a wrapper supply/bias pin has no simulated electrical effect.
+Therefore, a hardware power-up or power-down sequence must not be inferred
+from this model. Use the released silicon integration specification for the
+required ordering and delays; if no such specification has been released,
+power-sequencing requirements remain an open hardware-integration item.
+
+### Reset, power-loss retention and interrupted programming
+
+- `wb_rst_i` is the model's active-high digital reset.
+- As implemented, asserting `wb_rst_i` clears the command/result FIFOs,
+  configuration state and the complete behavioral array. Every cell is
+  restored to the deterministic initial model state.
+- Consequently, this model does **not** represent physical nonvolatile ReRAM
+  retention across reset or power loss and must not be used to qualify a
+  retention time.
+- The model has no power-loss detector or brownout behavior. Changing an
+  analog supply pin does not cancel or corrupt an operation.
+- If `wb_rst_i` is asserted during the modeled SET/RESET programming delay,
+  that operation is aborted before its final cell update. Reset then restores
+  the whole modeled array; there is no partially programmed-cell model.
+- Physical retention, brownout recovery and interrupted-pulse behavior require
+  silicon/AMS characterization and are outside this digital model.
 
 ## Wishbone protocol
 
@@ -576,6 +643,191 @@ Bank 1  → columns 32–63   → read 32 results
 ...
 Bank 15 → columns 480–511 → read 32 results
 ```
+
+## ADC/TDC lookup and golden vectors
+
+A golden vector is one known ADC/TDC result word together with its expected
+decoded fields and expected conductance result. Firmware can compare a received
+word with these vectors to check frame decoding, range handling and use of the
+correct calibration.
+
+The conductance conversion is a firmware/post-processing calibration. The
+behavioral model produces the result word but does not itself convert a count
+to microsiemens (µS).
+
+### Supplied coarse-count conversion
+
+The supplied calibration uses only the unsigned coarse count `C`:
+
+```text
+G31_minus_G30_uS = -211.8666 + 11.9662 * C
+G30_minus_G31_uS =  211.8666 - 11.9662 * C
+```
+
+Fine count `F` is checked for validity but is not used by this conductance
+conversion. Do not interpret the unsigned coarse count `C` as a signed number
+before performing the lookup.
+
+### Column and PWM dependence
+
+The calibration key is:
+
+```text
+(column, PWM, coarse count)
+```
+
+The supplied lookup and vectors are calibrated only for:
+
+```text
+column = 31
+PWM    = 0xFF
+```
+
+A result for another column or PWM value is not automatically a bad ADC/TDC
+conversion, but it is **uncalibrated by this dataset** and must not use this
+lookup table. Every additional column/PWM combination requires its own
+characterized coefficients or lookup data.
+
+### Signed 14-bit reconstruction
+
+When `result[13:0]` is used as a signed differential code, reconstruct it as
+14-bit two's complement:
+
+```text
+code = result[13:0]
+
+if code[13] == 0: signed_value = code
+if code[13] == 1: signed_value = code - 16384
+```
+
+| Code | Signed value |
+|---:|---:|
+| `0x0000` | 0 |
+| `0x1FFF` | +8191 |
+| `0x2000` | −8192 |
+| `0x3FFF` | −1 |
+
+This signed reconstruction applies to a complete differential result code. It
+is distinct from the calibration lookup, where `C=result[13:8]` is an unsigned
+coarse counter and `F=result[7:0]` is an unsigned fine counter. The current
+behavioral model generates a non-negative per-column count rather than the
+adjacent-column signed subtraction; see [Result-word format](#result-word-format).
+
+### Positive and negative conductance vectors
+
+The sign belongs to the conductance **difference**, not to either physical
+device's absolute conductance:
+
+```text
+G30_minus_G31 > 0  means G30 is greater than G31
+G30_minus_G31 < 0  means G31 is greater than G30
+```
+
+Examples from the supplied vectors are:
+
+| Raw word | Column | PWM | C | F | Measured `G30−G31` | Coarse-only prediction | Meaning |
+|---|---:|---:|---:|---:|---:|---:|---|
+| `0x0007C846` | 31 | `0xFF` | 8 | 70 | +129.8129 µS | +116.1370 µS | Column 30 is more conductive. |
+| `0x0007D019` | 31 | `0xFF` | 16 | 25 | +14.6274 µS | +20.4074 µS | Column 30 is slightly more conductive. |
+| `0x0007D243` | 31 | `0xFF` | 18 | 67 | +3.0937 µS | −3.5250 µS | Near-zero differential; calibration error/noise changes the predicted sign. |
+| `0x0007D210` | 31 | `0xFF` | 18 | 16 | −4.8827 µS | −3.5250 µS | Column 31 is more conductive. |
+
+A negative differential is valid. It does not imply that either device has a
+negative absolute conductance.
+
+### Saturation and invalid-code handling
+
+Apply these rules to the supplied calibration run before using the conversion:
+
+| Condition | Handling |
+|---|---|
+| `1 <= C <= 50` | Valid coarse-count range |
+| `0 <= F <= 100` | Valid fine-count range |
+| `C >= 51` | `SATURATED_OR_OVER_RANGE`; reject and do not clip to `C=50` |
+| `C = 0` | `INVALID_NO_CONVERSION` |
+| Column other than 31 | `UNCALIBRATED_COLUMN` |
+| PWM other than `0xFF` | `UNCALIBRATED_PWM` |
+| Any nonzero reserved/extra result bit | `INVALID_FRAME` |
+| `0xA000_0000` | Empty-result sentinel; not ADC/TDC data |
+
+The first row-30 attempt in the supplied characterization run returned
+`C=51, F=0`; it was rejected as saturated/over-range and a later retry was
+accepted.
+
+The behavioral model's internal count clamp and the characterization rule
+above serve different purposes. A numerically returned model count must still
+pass the column, PWM and calibration-range checks before firmware converts it
+to conductance.
+
+### Coarse lookup table
+
+The complete machine-readable lookup is in
+[`coarse_conductance_lookup.csv`](./coarse_conductance_lookup.csv). Values below
+are in µS and are calculated from the supplied coarse-only equations.
+
+<details>
+<summary>Show valid C=1 through C=50 lookup</summary>
+
+| C | `G31−G30` (µS) | `G30−G31` (µS) |
+|---:|---:|---:|
+| 1 | -199.9004 | 199.9004 |
+| 2 | -187.9342 | 187.9342 |
+| 3 | -175.9680 | 175.9680 |
+| 4 | -164.0018 | 164.0018 |
+| 5 | -152.0356 | 152.0356 |
+| 6 | -140.0694 | 140.0694 |
+| 7 | -128.1032 | 128.1032 |
+| 8 | -116.1370 | 116.1370 |
+| 9 | -104.1708 | 104.1708 |
+| 10 | -92.2046 | 92.2046 |
+| 11 | -80.2384 | 80.2384 |
+| 12 | -68.2722 | 68.2722 |
+| 13 | -56.3060 | 56.3060 |
+| 14 | -44.3398 | 44.3398 |
+| 15 | -32.3736 | 32.3736 |
+| 16 | -20.4074 | 20.4074 |
+| 17 | -8.4412 | 8.4412 |
+| 18 | 3.5250 | -3.5250 |
+| 19 | 15.4912 | -15.4912 |
+| 20 | 27.4574 | -27.4574 |
+| 21 | 39.4236 | -39.4236 |
+| 22 | 51.3898 | -51.3898 |
+| 23 | 63.3560 | -63.3560 |
+| 24 | 75.3222 | -75.3222 |
+| 25 | 87.2884 | -87.2884 |
+| 26 | 99.2546 | -99.2546 |
+| 27 | 111.2208 | -111.2208 |
+| 28 | 123.1870 | -123.1870 |
+| 29 | 135.1532 | -135.1532 |
+| 30 | 147.1194 | -147.1194 |
+| 31 | 159.0856 | -159.0856 |
+| 32 | 171.0518 | -171.0518 |
+| 33 | 183.0180 | -183.0180 |
+| 34 | 194.9842 | -194.9842 |
+| 35 | 206.9504 | -206.9504 |
+| 36 | 218.9166 | -218.9166 |
+| 37 | 230.8828 | -230.8828 |
+| 38 | 242.8490 | -242.8490 |
+| 39 | 254.8152 | -254.8152 |
+| 40 | 266.7814 | -266.7814 |
+| 41 | 278.7476 | -278.7476 |
+| 42 | 290.7138 | -290.7138 |
+| 43 | 302.6800 | -302.6800 |
+| 44 | 314.6462 | -314.6462 |
+| 45 | 326.6124 | -326.6124 |
+| 46 | 338.5786 | -338.5786 |
+| 47 | 350.5448 | -350.5448 |
+| 48 | 362.5110 | -362.5110 |
+| 49 | 374.4772 | -374.4772 |
+| 50 | 386.4434 | -386.4434 |
+
+</details>
+
+Supporting customer-delivery files:
+
+- [Full lookup and vector explanation](./adc_lookup_and_golden_vectors.md)
+- [Coarse lookup CSV](./coarse_conductance_lookup.csv)
+- [Golden vectors CSV](./golden_vectors.csv)
 
 ## Verification status
 
