@@ -43,9 +43,6 @@ DRC, power-integrity analysis or silicon characterization.
 | `doc/Process_to_write_to_ReRAM_CIM.png` | Command/result process diagram |
 | `doc/reram_cim_process.jpg` | Functional data-flow diagram |
 | `doc/symbol.jpg` | Hard-macro interface symbol |
-| `adc_lookup_and_golden_vectors.md` | Standalone ADC/TDC calibration and vector explanation |
-| `coarse_conductance_lookup.csv` | Machine-readable coarse-count conductance lookup for the supplied calibration |
-| `golden_vectors.csv` | Machine-readable ADC/TDC golden vectors |
 | `doc/timing_diagram.jpg` | Wishbone timing diagram |
 | `doc/ReRAM_array_multibit_measured_data.pdf` | ReRAM measurement reference |
 | `Neuromorphic_X2.yaml` | IP metadata and register declaration |
@@ -508,7 +505,7 @@ ceiling instead of wrapping.
 | `[24:23]` | Mode | Operation that generated the result |
 | `[22:14]` | Column | Global minuend/result column |
 | `[13:8]` | Coarse/count upper bits | Upper six bits of the 14-bit value |
-| `[7:0]` | Fine/count lower bits | Lower eight bits of the 14-bit value |
+| `[7:0]` | Count lower bits | Lower eight bits of the 14-bit value |
 
 The complete count is `result[13:0]`.
 
@@ -664,9 +661,8 @@ G31_minus_G30_uS = -211.8666 + 11.9662 * C
 G30_minus_G31_uS =  211.8666 - 11.9662 * C
 ```
 
-Fine count `F` is checked for validity but is not used by this conductance
-conversion. Do not interpret the unsigned coarse count `C` as a signed number
-before performing the lookup.
+Do not interpret the unsigned coarse count `C` as a signed number before
+performing the lookup. This supplied calibration is coarse-count-only.
 
 ### Column and PWM dependence
 
@@ -709,9 +705,9 @@ if code[13] == 1: signed_value = code - 16384
 
 This signed reconstruction applies to a complete differential result code. It
 is distinct from the calibration lookup, where `C=result[13:8]` is an unsigned
-coarse counter and `F=result[7:0]` is an unsigned fine counter. The current
-behavioral model generates a non-negative per-column count rather than the
-adjacent-column signed subtraction; see [Result-word format](#result-word-format).
+coarse counter. The current behavioral model generates a non-negative
+per-column count rather than the adjacent-column signed subtraction; see
+[Result-word format](#result-word-format).
 
 ### Positive and negative conductance vectors
 
@@ -725,12 +721,12 @@ G30_minus_G31 < 0  means G31 is greater than G30
 
 Examples from the supplied vectors are:
 
-| Raw word | Column | PWM | C | F | Measured `G30−G31` | Coarse-only prediction | Meaning |
-|---|---:|---:|---:|---:|---:|---:|---|
-| `0x0007C846` | 31 | `0xFF` | 8 | 70 | +129.8129 µS | +116.1370 µS | Column 30 is more conductive. |
-| `0x0007D019` | 31 | `0xFF` | 16 | 25 | +14.6274 µS | +20.4074 µS | Column 30 is slightly more conductive. |
-| `0x0007D243` | 31 | `0xFF` | 18 | 67 | +3.0937 µS | −3.5250 µS | Near-zero differential; calibration error/noise changes the predicted sign. |
-| `0x0007D210` | 31 | `0xFF` | 18 | 16 | −4.8827 µS | −3.5250 µS | Column 31 is more conductive. |
+| Raw word | Column | PWM | C | Measured `G30−G31` | Coarse-only prediction | Meaning |
+|---|---:|---:|---:|---:|---:|---|
+| `0x0007C846` | 31 | `0xFF` | 8 | +129.8129 µS | +116.1370 µS | Column 30 is more conductive. |
+| `0x0007D019` | 31 | `0xFF` | 16 | +14.6274 µS | +20.4074 µS | Column 30 is slightly more conductive. |
+| `0x0007D243` | 31 | `0xFF` | 18 | +3.0937 µS | −3.5250 µS | Near-zero differential; calibration error/noise changes the predicted sign. |
+| `0x0007D210` | 31 | `0xFF` | 18 | −4.8827 µS | −3.5250 µS | Column 31 is more conductive. |
 
 A negative differential is valid. It does not imply that either device has a
 negative absolute conductance.
@@ -742,7 +738,6 @@ Apply these rules to the supplied calibration run before using the conversion:
 | Condition | Handling |
 |---|---|
 | `1 <= C <= 50` | Valid coarse-count range |
-| `0 <= F <= 100` | Valid fine-count range |
 | `C >= 51` | `SATURATED_OR_OVER_RANGE`; reject and do not clip to `C=50` |
 | `C = 0` | `INVALID_NO_CONVERSION` |
 | Column other than 31 | `UNCALIBRATED_COLUMN` |
@@ -750,9 +745,8 @@ Apply these rules to the supplied calibration run before using the conversion:
 | Any nonzero reserved/extra result bit | `INVALID_FRAME` |
 | `0xA000_0000` | Empty-result sentinel; not ADC/TDC data |
 
-The first row-30 attempt in the supplied characterization run returned
-`C=51, F=0`; it was rejected as saturated/over-range and a later retry was
-accepted.
+The first row-30 attempt in the supplied characterization run returned `C=51`;
+it was rejected as saturated/over-range and a later retry was accepted.
 
 The behavioral model's internal count clamp and the characterization rule
 above serve different purposes. A numerically returned model count must still
@@ -761,9 +755,8 @@ to conductance.
 
 ### Coarse lookup table
 
-The complete machine-readable lookup is in
-[`coarse_conductance_lookup.csv`](./coarse_conductance_lookup.csv). Values below
-are in µS and are calculated from the supplied coarse-only equations.
+The values below are in µS and are calculated from the supplied coarse-only
+equations.
 
 <details>
 <summary>Show valid C=1 through C=50 lookup</summary>
@@ -822,12 +815,6 @@ are in µS and are calculated from the supplied coarse-only equations.
 | 50 | 386.4434 | -386.4434 |
 
 </details>
-
-Supporting customer-delivery files:
-
-- [Full lookup and vector explanation](./adc_lookup_and_golden_vectors.md)
-- [Coarse lookup CSV](./coarse_conductance_lookup.csv)
-- [Golden vectors CSV](./golden_vectors.csv)
 
 ## Verification status
 
