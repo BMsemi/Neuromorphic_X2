@@ -22,6 +22,9 @@
 //   * COMPUTE accumulates 1 through 32 packets.  It launches when bit 9 is
 //     set or when packet 32 is accepted.  A non-COMPUTE command discards a
 //     partial COMPUTE burst, matching the V2 command logic.
+//   * Every COMPUTE launch discards all unread response-FIFO words before
+//     producing the new operation's results.  A COMPUTE-all operation thus
+//     replaces any older unread result stream with its 32 new bank results.
 //   * Result FIFO words use the 512x512 result format:
 //       [31:25] 7'b0
 //       [24:23] operation mode
@@ -114,6 +117,11 @@ module Neuromorphic_X2_wb_beh #(
   logic       response_wr_wrap;
   logic [4:0] response_rd_idx;
   logic       response_rd_wrap;
+
+  // COMPUTE uses an atomic response-FIFO flush handshake with the Wishbone
+  // process.  This prevents a simultaneous bus read from racing the discard.
+  logic       compute_response_flush_req;
+  logic       compute_response_flush_done;
 
   // Configuration registers from the first three packets.
   logic [15:0] target_set1;
@@ -323,6 +331,19 @@ module Neuromorphic_X2_wb_beh #(
     end
   endtask
 
+  // Discard every unread response before a newly launched COMPUTE operation.
+  // The read pointer is advanced to the current write pointer by the sole
+  // Wishbone/read-pointer process, making the FIFO empty without rewriting
+  // its storage array.  New COMPUTE results may then use all 32 entries.
+  task automatic flush_responses_for_compute;
+    begin
+      compute_response_flush_req = 1'b1;
+      wait (compute_response_flush_done || wb_rst_i);
+      compute_response_flush_req = 1'b0;
+      wait (!compute_response_flush_done || wb_rst_i);
+    end
+  endtask
+
   task automatic clear_compute_state;
     integer row;
     begin
@@ -472,6 +493,9 @@ module Neuromorphic_X2_wb_beh #(
     integer bank_base;
     logic [511:0] result_mask;
     begin
+      // A new COMPUTE result stream supersedes all unread older responses.
+      flush_responses_for_compute();
+
       result_mask = compute_col_mask;
       if (compute_full_column) begin
         result_mask = 512'b0;
@@ -566,6 +590,7 @@ module Neuromorphic_X2_wb_beh #(
       command_rd_wrap     = 1'b0;
       response_wr_idx     = 5'd0;
       response_wr_wrap    = 1'b0;
+      compute_response_flush_req = 1'b0;
 
       target_set1         = 16'hC40F;
       target_set2         = 16'hA203;
@@ -604,10 +629,20 @@ module Neuromorphic_X2_wb_beh #(
       command_wr_wrap  <= 1'b0;
       response_rd_idx  <= 5'd0;
       response_rd_wrap <= 1'b0;
+      compute_response_flush_done <= 1'b0;
     end else begin
       wbs_ack_o <= 1'b0;
 
-      if (selected && wbs_we_i && !wbs_ack_o) begin
+      if (compute_response_flush_req) begin
+        // Invalidate all unread results atomically.  Give this operation
+        // priority over bus reads so no old word can be consumed while the
+        // read pointer is being synchronized to the write pointer.
+        response_rd_idx  <= response_wr_idx;
+        response_rd_wrap <= response_wr_wrap;
+        compute_response_flush_done <= 1'b1;
+      end else if (compute_response_flush_done) begin
+        compute_response_flush_done <= 1'b0;
+      end else if (selected && wbs_we_i && !wbs_ack_o) begin
         if (!command_full) begin
           command_q[command_wr_idx] <= wbs_dat_i;
 

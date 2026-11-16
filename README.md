@@ -87,6 +87,11 @@ Ordinary COMPUTE produces one result for each unique selected column.
 COMPUTE-all produces exactly 32 results for the bank selected by
 `column[8:5]`.
 
+Every new COMPUTE launch discards all unread words already present in the
+result FIFO. The new operation therefore starts with all 32 result entries
+available; for COMPUTE-all, its 32 bank results completely replace the older
+unread result stream.
+
 ### Result frame
 
 | Bits | Field |
