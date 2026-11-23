@@ -79,14 +79,6 @@ Within each group: add partial vectors. Across all 16 groups: concatenate.
 Host on PS -> Command FIFO -> Tiled 512x512 PE compute -> Response FIFO -> L2 buffer
 ```
 
-| Component | Capacity / role | Location |
-| --- | --- | --- |
-| Host on PS | Host software; binary packets | PS |
-| Command FIFO | 32 x 32-bit; shared | Inside 512x512 PE, in PL |
-| Tiled 512x512 PE compute | 32x32 per launch | Inside PE, in PL |
-| Response FIFO | 32 x 32-bit; shared | Inside 512x512 PE, in PL |
-| L2 buffer | 512 x UINT32; output sums | Outside PE, in PL |
-
 AXI-Lite provides L2 result readback to the host.
 
 **Command FIFO + tiled compute + response FIFO belong to the PE. L2 is outside the PE.**
