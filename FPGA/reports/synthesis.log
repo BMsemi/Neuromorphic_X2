@@ -1,0 +1,333 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Mon Nov 23 13:15:18 2026
+# Process ID: 26336
+# Current directory: D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe
+# Command line: vivado.exe -mode batch -source scripts/synthesize.tcl -log build/synthesis/vivado.log -journal build/synthesis/vivado.jou
+# Log file: D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/build/synthesis/vivado.log
+# Journal file: D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe\build/synthesis/vivado.jou
+# Running On: H39SRK2-PC, OS: Windows, CPU Frequency: 3600 MHz, CPU Physical cores: 4, Host memory: 17058 MB
+#-----------------------------------------------------------
+source scripts/synthesize.tcl
+# set root [file normalize [file join [file dirname [info script]] ..]]
+# set out [file join $root build synthesis]
+# file mkdir $out
+# read_verilog [glob [file join $root rtl *.v]]
+read_verilog: Time (s): cpu = 00:00:06 ; elapsed = 00:00:09 . Memory (MB): peak = 412.047 ; gain = 97.297
+# synth_design -top pe512_system -part xczu7ev-ffvc1156-2-e -mode out_of_context
+Command: synth_design -top pe512_system -part xczu7ev-ffvc1156-2-e -mode out_of_context
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xczu7ev'
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 20072
+INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [C:/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
+---------------------------------------------------------------------------------
+Starting Synthesize : Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 849.629 ; gain = 412.703
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'pe512_system' [D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/rtl/pe512_system.v:3]
+INFO: [Synth 8-6157] synthesizing module 'pe512_core' [D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/rtl/pe512_core.v:4]
+INFO: [Synth 8-6157] synthesizing module 'shared_fifo32' [D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/rtl/shared_fifo32.v:3]
+INFO: [Synth 8-6155] done synthesizing module 'shared_fifo32' (0#1) [D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/rtl/shared_fifo32.v:3]
+INFO: [Synth 8-6155] done synthesizing module 'pe512_core' (0#1) [D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/rtl/pe512_core.v:4]
+INFO: [Synth 8-6157] synthesizing module 'l2_accumulator' [D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/rtl/l2_accumulator.v:3]
+INFO: [Synth 8-6155] done synthesizing module 'l2_accumulator' (0#1) [D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/rtl/l2_accumulator.v:3]
+INFO: [Synth 8-6155] done synthesizing module 'pe512_system' (0#1) [D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/rtl/pe512_system.v:3]
+WARNING: [Synth 8-6014] Unused sequential element configuration_reg was removed. 
+WARNING: [Synth 8-7129] Port response_data[31] in module l2_accumulator is either unconnected or has no load
+WARNING: [Synth 8-7129] Port response_data[30] in module l2_accumulator is either unconnected or has no load
+WARNING: [Synth 8-7129] Port response_data[29] in module l2_accumulator is either unconnected or has no load
+WARNING: [Synth 8-7129] Port response_data[28] in module l2_accumulator is either unconnected or has no load
+WARNING: [Synth 8-7129] Port response_data[27] in module l2_accumulator is either unconnected or has no load
+WARNING: [Synth 8-7129] Port response_data[26] in module l2_accumulator is either unconnected or has no load
+WARNING: [Synth 8-7129] Port response_data[25] in module l2_accumulator is either unconnected or has no load
+---------------------------------------------------------------------------------
+Finished Synthesize : Time (s): cpu = 00:00:10 ; elapsed = 00:00:11 . Memory (MB): peak = 949.883 ; gain = 512.957
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:11 ; elapsed = 00:00:12 . Memory (MB): peak = 949.883 ; gain = 512.957
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xczu7ev-ffvc1156-2-e
+INFO: [Synth 8-6742] Reading net delay rules and data
+---------------------------------------------------------------------------------
+INFO: [Device 21-403] Loading part xczu7ev-ffvc1156-2-e
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:11 ; elapsed = 00:00:12 . Memory (MB): peak = 949.883 ; gain = 512.957
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6904] The RAM "shared_fifo32:/mem_reg" of size (depth=32 x width=32) is automatically implemented using LUTRAM. BRAM implementation would be inefficient 
+INFO: [Synth 8-5555] Implemented Block Ram Cascade chain of height 4 and width 18 for RAM "pe512_core:/weights_reg"
+INFO: [Synth 8-5555] Implemented Block Ram Cascade chain of height 2 and width 9 for RAM "pe512_core:/weights_reg"
+INFO: [Synth 8-7030] Implemented Non-Cascaded Block Ram (cascade_height = 1) of width 4 for RAM "pe512_core:/weights_reg"
+INFO: [Synth 8-7030] Implemented Non-Cascaded Block Ram (cascade_height = 1) of width 1 for RAM "pe512_core:/weights_reg"
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:12 ; elapsed = 00:00:13 . Memory (MB): peak = 949.883 ; gain = 512.957
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input   32 Bit       Adders := 1     
+	   2 Input   13 Bit       Adders := 1     
+	   2 Input    9 Bit       Adders := 1     
+	   2 Input    6 Bit       Adders := 35    
+	   2 Input    5 Bit       Adders := 8     
+	   2 Input    2 Bit       Adders := 1     
++---Registers : 
+	               32 Bit    Registers := 3     
+	               13 Bit    Registers := 2     
+	                9 Bit    Registers := 2     
+	                6 Bit    Registers := 35    
+	                5 Bit    Registers := 7     
+	                4 Bit    Registers := 3     
+	                2 Bit    Registers := 3     
+	                1 Bit    Registers := 2     
++---RAMs : 
+	             256K Bit	(8192 X 32 bit)          RAMs := 1     
+	             1024 Bit	(32 X 32 bit)          RAMs := 2     
++---Muxes : 
+	   2 Input   32 Bit        Muxes := 17    
+	   3 Input   32 Bit        Muxes := 1     
+	  12 Input   32 Bit        Muxes := 2     
+	   3 Input   13 Bit        Muxes := 1     
+	   2 Input   13 Bit        Muxes := 1     
+	   2 Input    9 Bit        Muxes := 1     
+	   2 Input    6 Bit        Muxes := 4     
+	  12 Input    6 Bit        Muxes := 32    
+	  12 Input    5 Bit        Muxes := 2     
+	   2 Input    4 Bit        Muxes := 1     
+	   2 Input    3 Bit        Muxes := 2     
+	   3 Input    2 Bit        Muxes := 2     
+	   2 Input    2 Bit        Muxes := 1     
+	   3 Input    1 Bit        Muxes := 2     
+	  12 Input    1 Bit        Muxes := 12    
+	   2 Input    1 Bit        Muxes := 17    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 1728 (col length:144)
+BRAMs: 624 (col length: RAMB18 144 RAMB36 72)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
+INFO: [Synth 8-6904] The RAM "pe/command_fifo/mem_reg" of size (depth=32 x width=32) is automatically implemented using LUTRAM. BRAM implementation would be inefficient 
+INFO: [Synth 8-6904] The RAM "pe/response_fifo/mem_reg" of size (depth=32 x width=32) is automatically implemented using LUTRAM. BRAM implementation would be inefficient 
+INFO: [Synth 8-5555] Implemented Block Ram Cascade chain of height 4 and width 18 for RAM "pe512_system/pe/weights_reg"
+INFO: [Synth 8-5555] Implemented Block Ram Cascade chain of height 2 and width 9 for RAM "pe512_system/pe/weights_reg"
+INFO: [Synth 8-7030] Implemented Non-Cascaded Block Ram (cascade_height = 1) of width 4 for RAM "pe512_system/pe/weights_reg"
+INFO: [Synth 8-7030] Implemented Non-Cascaded Block Ram (cascade_height = 1) of width 1 for RAM "pe512_system/pe/weights_reg"
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:41 ; elapsed = 00:00:50 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Preliminary Mapping Report (see note below)
++-------------+----------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|Module Name  | RTL Object     | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | Cascade Heights | 
++-------------+----------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|pe512_system | pe/weights_reg | 8 K x 32(READ_FIRST)   | W |   | 8 K x 32(WRITE_FIRST)  |   | R | Port A and B     | 1      | 7      | 4,2,1,1         | 
++-------------+----------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+
+Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
+
+Distributed RAM: Preliminary Mapping Report (see note below)
++-------------+--------------------------+----------------+----------------------+------------------------------+
+|Module Name  | RTL Object               | Inference      | Size (Depth x Width) | Primitives                   | 
++-------------+--------------------------+----------------+----------------------+------------------------------+
+|pe512_system | pe/command_fifo/mem_reg  | Implied        | 32 x 32              | RAM32M16 x 3                 | 
+|pe512_system | pe/response_fifo/mem_reg | Implied        | 32 x 32              | RAM32M16 x 3                 | 
+|pe512_system | l2/sums_reg              | User Attribute | 512 x 32             | RAM256X1D x 64 RAM64M8 x 40  | 
++-------------+--------------------------+----------------+----------------------+------------------------------+
+
+Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+No constraint files found.
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:42 ; elapsed = 00:00:51 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Final Mapping Report
++-------------+----------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|Module Name  | RTL Object     | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | Cascade Heights | 
++-------------+----------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|pe512_system | pe/weights_reg | 8 K x 32(READ_FIRST)   | W |   | 8 K x 32(WRITE_FIRST)  |   | R | Port A and B     | 1      | 7      | 4,2,1,1         | 
++-------------+----------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+
+
+Distributed RAM: Final Mapping Report
++-------------+--------------------------+----------------+----------------------+------------------------------+
+|Module Name  | RTL Object               | Inference      | Size (Depth x Width) | Primitives                   | 
++-------------+--------------------------+----------------+----------------------+------------------------------+
+|pe512_system | pe/command_fifo/mem_reg  | Implied        | 32 x 32              | RAM32M16 x 3                 | 
+|pe512_system | pe/response_fifo/mem_reg | Implied        | 32 x 32              | RAM32M16 x 3                 | 
+|pe512_system | l2/sums_reg              | User Attribute | 512 x 32             | RAM256X1D x 64 RAM64M8 x 40  | 
++-------------+--------------------------+----------------+----------------------+------------------------------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-7052] The timing for the instance pe/weights_reg_bram_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance pe/weights_reg_bram_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance pe/weights_reg_bram_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance pe/weights_reg_bram_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:43 ; elapsed = 00:00:52 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:50 ; elapsed = 00:00:59 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:50 ; elapsed = 00:00:59 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:50 ; elapsed = 00:00:59 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:50 ; elapsed = 00:00:59 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:50 ; elapsed = 00:00:59 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:50 ; elapsed = 00:00:59 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+----------+------+
+|      |Cell      |Count |
++------+----------+------+
+|1     |CARRY8    |    18|
+|2     |LUT1      |    14|
+|3     |LUT2      |    32|
+|4     |LUT3      |   215|
+|5     |LUT4      |   102|
+|6     |LUT5      |   140|
+|7     |LUT6      |   469|
+|8     |MUXF7     |    34|
+|9     |RAM256X1D |    64|
+|10    |RAM32M    |     2|
+|11    |RAM32M16  |     3|
+|12    |RAM64M8   |    40|
+|13    |RAMB18E2  |     1|
+|14    |RAMB36E2  |     7|
+|15    |FDRE      |   463|
++------+----------+------+
+
+Report Instance Areas: 
++------+------------------+----------------+------+
+|      |Instance          |Module          |Cells |
++------+------------------+----------------+------+
+|1     |top               |                |  1604|
+|2     |  l2              |l2_accumulator  |   426|
+|3     |  pe              |pe512_core      |  1178|
+|4     |    command_fifo  |shared_fifo32   |   188|
+|5     |    response_fifo |shared_fifo32_0 |   146|
++------+------------------+----------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:50 ; elapsed = 00:00:59 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 9 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:50 ; elapsed = 00:00:59 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+Synthesis Optimization Complete : Time (s): cpu = 00:00:50 ; elapsed = 00:00:59 . Memory (MB): peak = 1892.012 ; gain = 1455.086
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.039 . Memory (MB): peak = 1892.012 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 161 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 1948.211 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 109 instances were transformed.
+  RAM256X1D => RAM256X1D (MUXF7(x4), MUXF8(x2), RAMD64E(x8)): 64 instances
+  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 2 instances
+  RAM32M16 => RAM32M16 (RAMD32(x14), RAMS32(x2)): 3 instances
+  RAM64M8 => RAM64M8 (RAMD64E(x8)): 40 instances
+
+Synth Design complete, checksum: 85459b9d
+INFO: [Common 17-83] Releasing license: Synthesis
+37 Infos, 9 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:55 ; elapsed = 00:01:07 . Memory (MB): peak = 1948.211 ; gain = 1536.164
+# create_clock -name pe_clk -period 10.000 [get_ports clk]
+create_clock: Time (s): cpu = 00:00:08 ; elapsed = 00:00:09 . Memory (MB): peak = 1948.211 ; gain = 0.000
+# report_utilization -hierarchical -file [file join $out utilization.rpt]
+# report_timing_summary -file [file join $out timing_estimate.rpt]
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: E, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+WARNING: [Timing 38-242] The property HD.CLK_SRC of clock port "clk" is not set. In out-of-context mode, this prevents timing estimation for clock delay/skew
+Resolution: Set the HD.CLK_SRC property of the out-of-context port to the location of the clock buffer instance in the top-level design
+report_timing_summary: Time (s): cpu = 00:00:51 ; elapsed = 00:00:56 . Memory (MB): peak = 3749.512 ; gain = 1801.301
+# write_checkpoint -force [file join $out pe512_system_synth.dcp]
+INFO: [Timing 38-480] Writing timing data to binary archive.
+INFO: [Common 17-1381] The checkpoint 'D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/build/synthesis/pe512_system_synth.dcp' has been generated.
+# puts "SHARED_PE_SYNTHESIS_PASSED"
+SHARED_PE_SYNTHESIS_PASSED
+INFO: [Common 17-206] Exiting Vivado at Mon Nov 23 13:17:52 2026...

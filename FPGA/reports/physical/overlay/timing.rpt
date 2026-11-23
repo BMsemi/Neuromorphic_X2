@@ -1,0 +1,359 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+-------------------------------------------------------------------------------------------
+| Tool Version      : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
+| Date              : Mon Nov 23 13:44:59 2026
+| Host              : H39SRK2-PC running 64-bit major release  (build 9200)
+| Command           : report_timing_summary -file D:/fpga_build/shared_pe512_v2/timing.rpt
+| Design            : shared_pe_wrapper
+| Device            : xczu7ev-ffvc1156
+| Speed File        : -2  PRODUCTION 1.30 05-15-2022
+| Temperature Grade : E
+-------------------------------------------------------------------------------------------
+
+Timing Summary Report
+
+------------------------------------------------------------------------------------------------
+| Timer Settings
+| --------------
+------------------------------------------------------------------------------------------------
+
+  Enable Multi Corner Analysis               :  Yes
+  Enable Pessimism Removal                   :  Yes
+  Pessimism Removal Resolution               :  Nearest Common Node
+  Enable Input Delay Default Clock           :  No
+  Enable Preset / Clear Arcs                 :  No
+  Disable Flight Delays                      :  No
+  Ignore I/O Paths                           :  No
+  Timing Early Launch at Borrowing Latches   :  No
+  Borrow Time for Max Delay Exceptions       :  Yes
+  Merge Timing Exceptions                    :  Yes
+
+  Corner  Analyze    Analyze    
+  Name    Max Paths  Min Paths  
+  ------  ---------  ---------  
+  Slow    Yes        Yes        
+  Fast    Yes        Yes        
+
+
+------------------------------------------------------------------------------------------------
+| Report Methodology
+| ------------------
+------------------------------------------------------------------------------------------------
+
+No report available as report_methodology has not been run prior. Run report_methodology on the current design for the summary of methodology violations.
+
+
+
+check_timing report
+
+Table of Contents
+-----------------
+1. checking no_clock (0)
+2. checking constant_clock (0)
+3. checking pulse_width_clock (0)
+4. checking unconstrained_internal_endpoints (0)
+5. checking no_input_delay (0)
+6. checking no_output_delay (0)
+7. checking multiple_clock (0)
+8. checking generated_clocks (0)
+9. checking loops (0)
+10. checking partial_input_delay (0)
+11. checking partial_output_delay (0)
+12. checking latch_loops (0)
+
+1. checking no_clock (0)
+------------------------
+ There are 0 register/latch pins with no clock.
+
+
+2. checking constant_clock (0)
+------------------------------
+ There are 0 register/latch pins with constant_clock.
+
+
+3. checking pulse_width_clock (0)
+---------------------------------
+ There are 0 register/latch pins which need pulse_width check
+
+
+4. checking unconstrained_internal_endpoints (0)
+------------------------------------------------
+ There are 0 pins that are not constrained for maximum delay.
+
+ There are 0 pins that are not constrained for maximum delay due to constant clock.
+
+
+5. checking no_input_delay (0)
+------------------------------
+ There are 0 input ports with no input delay specified.
+
+ There are 0 input ports with no input delay but user has a false path constraint.
+
+
+6. checking no_output_delay (0)
+-------------------------------
+ There are 0 ports with no output delay specified.
+
+ There are 0 ports with no output delay but user has a false path constraint
+
+ There are 0 ports with no output delay but with a timing clock defined on it or propagating through it
+
+
+7. checking multiple_clock (0)
+------------------------------
+ There are 0 register/latch pins with multiple clocks.
+
+
+8. checking generated_clocks (0)
+--------------------------------
+ There are 0 generated clocks that are not connected to a clock source.
+
+
+9. checking loops (0)
+---------------------
+ There are 0 combinational loops in the design.
+
+
+10. checking partial_input_delay (0)
+------------------------------------
+ There are 0 input ports with partial input delay specified.
+
+
+11. checking partial_output_delay (0)
+-------------------------------------
+ There are 0 ports with partial output delay specified.
+
+
+12. checking latch_loops (0)
+----------------------------
+ There are 0 combinational latch loops in the design through latch input
+
+
+
+------------------------------------------------------------------------------------------------
+| Design Timing Summary
+| ---------------------
+------------------------------------------------------------------------------------------------
+
+    WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
+    -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
+      4.443        0.000                      0                12246        0.022        0.000                      0                12246        3.500        0.000                       0                  2374  
+
+
+All user specified timing constraints are met.
+
+
+------------------------------------------------------------------------------------------------
+| Clock Summary
+| -------------
+------------------------------------------------------------------------------------------------
+
+Clock     Waveform(ns)       Period(ns)      Frequency(MHz)
+-----     ------------       ----------      --------------
+clk_pl_0  {0.000 5.000}      10.000          100.000         
+
+
+------------------------------------------------------------------------------------------------
+| Intra Clock Table
+| -----------------
+------------------------------------------------------------------------------------------------
+
+Clock             WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints     WPWS(ns)     TPWS(ns)  TPWS Failing Endpoints  TPWS Total Endpoints  
+-----             -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------     --------     --------  ----------------------  --------------------  
+clk_pl_0            4.443        0.000                      0                12246        0.022        0.000                      0                12246        3.500        0.000                       0                  2374  
+
+
+------------------------------------------------------------------------------------------------
+| Inter Clock Table
+| -----------------
+------------------------------------------------------------------------------------------------
+
+From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
+----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+
+
+------------------------------------------------------------------------------------------------
+| Other Path Groups Table
+| -----------------------
+------------------------------------------------------------------------------------------------
+
+Path Group    From Clock    To Clock          WNS(ns)      TNS(ns)  TNS Failing Endpoints  TNS Total Endpoints      WHS(ns)      THS(ns)  THS Failing Endpoints  THS Total Endpoints  
+----------    ----------    --------          -------      -------  ---------------------  -------------------      -------      -------  ---------------------  -------------------  
+
+
+------------------------------------------------------------------------------------------------
+| Timing Details
+| --------------
+------------------------------------------------------------------------------------------------
+
+
+---------------------------------------------------------------------------------------------------
+From Clock:  clk_pl_0
+  To Clock:  clk_pl_0
+
+Setup :            0  Failing Endpoints,  Worst Slack        4.443ns,  Total Violation        0.000ns
+Hold  :            0  Failing Endpoints,  Worst Slack        0.022ns,  Total Violation        0.000ns
+PW    :            0  Failing Endpoints,  Worst Slack        3.500ns,  Total Violation        0.000ns
+---------------------------------------------------------------------------------------------------
+
+
+Max Delay Paths
+--------------------------------------------------------------------------------------
+Slack (MET) :             4.443ns  (required time - arrival time)
+  Source:                 shared_pe_i/rst_pl/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            shared_pe_i/pe/inst/prog_addr_reg[11]/CE
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            10.000ns  (clk_pl_0 rise@10.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        5.194ns  (logic 0.789ns (15.191%)  route 4.405ns (84.809%))
+  Logic Levels:           8  (LUT2=1 LUT5=1 LUT6=6)
+  Clock Path Skew:        -0.172ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    1.554ns = ( 11.554 - 10.000 ) 
+    Source Clock Delay      (SCD):    1.823ns
+    Clock Pessimism Removal (CPR):    0.097ns
+  Clock Uncertainty:      0.130ns  ((TSJ^2 + DJ^2)^1/2) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Discrete Jitter          (DJ):    0.250ns
+    Phase Error              (PE):    0.000ns
+  Clock Net Delay (Source):      1.615ns (routing 0.569ns, distribution 1.046ns)
+  Clock Net Delay (Destination): 1.386ns (routing 0.512ns, distribution 0.874ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  
+    PS8_X0Y0             PS8                          0.000     0.000 r  shared_pe_i/psu/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.180     0.180    shared_pe_i/psu/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.028     0.208 r  shared_pe_i/psu/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X1Y2 (CLOCK_ROOT)    net (fo=2374, routed)        1.615     1.823    shared_pe_i/rst_pl/U0/slowest_sync_clk
+    SLICE_X53Y202        FDRE                                         r  shared_pe_i/rst_pl/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X53Y202        FDRE (Prop_EFF_SLICEM_C_Q)
+                                                      0.076     1.899 r  shared_pe_i/rst_pl/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N/Q
+                         net (fo=157, routed)         1.282     3.181    shared_pe_i/pe/inst/pe/pe/response_fifo/aresetn
+    SLICE_X53Y98         LUT2 (Prop_B5LUT_SLICEM_I1_O)
+                                                      0.116     3.297 f  shared_pe_i/pe/inst/pe/pe/response_fifo/rd_ptr_rep[4]_i_1/O
+                         net (fo=571, routed)         0.530     3.826    shared_pe_i/pe/inst/pe/pe/response_fifo/SR[0]
+    SLICE_X57Y93         LUT6 (Prop_F6LUT_SLICEM_I2_O)
+                                                      0.148     3.974 r  shared_pe_i/pe/inst/pe/pe/response_fifo/weights_reg_bram_6_i_12/O
+                         net (fo=2, routed)           0.235     4.209    shared_pe_i/pe/inst/pe/pe/command_fifo/weights_reg_bram_7_1
+    SLICE_X53Y93         LUT6 (Prop_H6LUT_SLICEM_I1_O)
+                                                      0.125     4.334 r  shared_pe_i/pe/inst/pe/pe/command_fifo/weights_reg_bram_6_i_9/O
+                         net (fo=5, routed)           0.190     4.524    shared_pe_i/pe/inst/pe/pe/command_fifo/prog_ready
+    SLICE_X52Y92         LUT6 (Prop_D6LUT_SLICEL_I0_O)
+                                                      0.050     4.574 r  shared_pe_i/pe/inst/pe/pe/command_fifo/s_axi_bresp[1]_i_10/O
+                         net (fo=2, routed)           0.047     4.621    shared_pe_i/pe/inst/pe/pe/command_fifo/s_axi_bresp[1]_i_10_n_0
+    SLICE_X52Y92         LUT6 (Prop_G6LUT_SLICEL_I0_O)
+                                                      0.097     4.718 r  shared_pe_i/pe/inst/pe/pe/command_fifo/s_axi_bresp[1]_i_6/O
+                         net (fo=1, routed)           0.091     4.809    shared_pe_i/pe/inst/pe/pe/command_fifo/s_axi_bresp[1]_i_6_n_0
+    SLICE_X52Y94         LUT6 (Prop_C6LUT_SLICEL_I2_O)
+                                                      0.050     4.859 r  shared_pe_i/pe/inst/pe/pe/command_fifo/s_axi_bresp[1]_i_3/O
+                         net (fo=4, routed)           0.875     5.734    shared_pe_i/pe/inst/pe/pe/command_fifo/s_axi_bresp[1]_i_3_n_0
+    SLICE_X53Y164        LUT6 (Prop_G6LUT_SLICEM_I1_O)
+                                                      0.090     5.824 r  shared_pe_i/pe/inst/pe/pe/command_fifo/prog_addr[12]_i_4/O
+                         net (fo=1, routed)           0.740     6.564    shared_pe_i/pe/inst/pe/pe/command_fifo/prog_addr[12]_i_4_n_0
+    SLICE_X53Y94         LUT5 (Prop_F6LUT_SLICEM_I4_O)
+                                                      0.037     6.601 r  shared_pe_i/pe/inst/pe/pe/command_fifo/prog_addr[12]_i_1/O
+                         net (fo=13, routed)          0.415     7.016    shared_pe_i/pe/inst/prog_addr
+    SLICE_X54Y89         FDRE                                         r  shared_pe_i/pe/inst/prog_addr_reg[11]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                     10.000    10.000 r  
+    PS8_X0Y0             PS8                          0.000    10.000 r  shared_pe_i/psu/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.143    10.143    shared_pe_i/psu/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.025    10.168 r  shared_pe_i/psu/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X1Y2 (CLOCK_ROOT)    net (fo=2374, routed)        1.386    11.554    shared_pe_i/pe/inst/aclk
+    SLICE_X54Y89         FDRE                                         r  shared_pe_i/pe/inst/prog_addr_reg[11]/C
+                         clock pessimism              0.097    11.651    
+                         clock uncertainty           -0.130    11.521    
+    SLICE_X54Y89         FDRE (Setup_DFF_SLICEM_C_CE)
+                                                     -0.061    11.460    shared_pe_i/pe/inst/prog_addr_reg[11]
+  -------------------------------------------------------------------
+                         required time                         11.460    
+                         arrival time                          -7.016    
+  -------------------------------------------------------------------
+                         slack                                  4.443    
+
+
+
+
+
+Min Delay Paths
+--------------------------------------------------------------------------------------
+Slack (MET) :             0.022ns  (arrival time - required time)
+  Source:                 shared_pe_i/pe/inst/pe/l2/clear_addr_reg[4]/C
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Destination:            shared_pe_i/pe/inst/pe/l2/clear_addr_reg[5]/D
+                            (rising edge-triggered cell FDRE clocked by clk_pl_0  {rise@0.000ns fall@5.000ns period=10.000ns})
+  Path Group:             clk_pl_0
+  Path Type:              Hold (Min at Slow Process Corner)
+  Requirement:            0.000ns  (clk_pl_0 rise@0.000ns - clk_pl_0 rise@0.000ns)
+  Data Path Delay:        0.182ns  (logic 0.083ns (45.679%)  route 0.099ns (54.321%))
+  Logic Levels:           1  (LUT6=1)
+  Clock Path Skew:        0.099ns (DCD - SCD - CPR)
+    Destination Clock Delay (DCD):    1.798ns
+    Source Clock Delay      (SCD):    1.552ns
+    Clock Pessimism Removal (CPR):    0.146ns
+  Clock Net Delay (Source):      1.384ns (routing 0.512ns, distribution 0.872ns)
+  Clock Net Delay (Destination): 1.590ns (routing 0.569ns, distribution 1.021ns)
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  
+    PS8_X0Y0             PS8                          0.000     0.000 r  shared_pe_i/psu/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.143     0.143    shared_pe_i/psu/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.025     0.168 r  shared_pe_i/psu/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X1Y2 (CLOCK_ROOT)    net (fo=2374, routed)        1.384     1.552    shared_pe_i/pe/inst/pe/l2/aclk
+    SLICE_X59Y126        FDRE                                         r  shared_pe_i/pe/inst/pe/l2/clear_addr_reg[4]/C
+  -------------------------------------------------------------------    -------------------
+    SLICE_X59Y126        FDRE (Prop_DFF2_SLICEL_C_Q)
+                                                      0.061     1.613 r  shared_pe_i/pe/inst/pe/l2/clear_addr_reg[4]/Q
+                         net (fo=11, routed)          0.077     1.690    shared_pe_i/pe/inst/pe/l2/clear_addr_reg[4]
+    SLICE_X58Y126        LUT6 (Prop_G6LUT_SLICEL_I4_O)
+                                                      0.022     1.712 r  shared_pe_i/pe/inst/pe/l2/clear_addr[5]_i_1/O
+                         net (fo=1, routed)           0.022     1.734    shared_pe_i/pe/inst/pe/l2/p_0_in__4[5]
+    SLICE_X58Y126        FDRE                                         r  shared_pe_i/pe/inst/pe/l2/clear_addr_reg[5]/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk_pl_0 rise edge)
+                                                      0.000     0.000 r  
+    PS8_X0Y0             PS8                          0.000     0.000 r  shared_pe_i/psu/inst/PS8_i/PLCLK[0]
+                         net (fo=1, routed)           0.180     0.180    shared_pe_i/psu/inst/pl_clk_unbuffered[0]
+    BUFG_PS_X0Y80        BUFG_PS (Prop_BUFG_PS_I_O)
+                                                      0.028     0.208 r  shared_pe_i/psu/inst/buffer_pl_clk_0.PL_CLK_0_BUFG/O
+    X1Y2 (CLOCK_ROOT)    net (fo=2374, routed)        1.590     1.798    shared_pe_i/pe/inst/pe/l2/aclk
+    SLICE_X58Y126        FDRE                                         r  shared_pe_i/pe/inst/pe/l2/clear_addr_reg[5]/C
+                         clock pessimism             -0.146     1.651    
+    SLICE_X58Y126        FDRE (Hold_GFF_SLICEL_C_D)
+                                                      0.060     1.711    shared_pe_i/pe/inst/pe/l2/clear_addr_reg[5]
+  -------------------------------------------------------------------
+                         required time                         -1.711    
+                         arrival time                           1.734    
+  -------------------------------------------------------------------
+                         slack                                  0.022    
+
+
+
+
+
+Pulse Width Checks
+--------------------------------------------------------------------------------------
+Clock Name:         clk_pl_0
+Waveform(ns):       { 0.000 5.000 }
+Period(ns):         10.000
+Sources:            { shared_pe_i/psu/inst/PS8_i/PLCLK[0] }
+
+Check Type        Corner  Lib Pin          Reference Pin  Required(ns)  Actual(ns)  Slack(ns)  Location  Pin
+Min Period        n/a     PS8/MAXIGP0ACLK  n/a            3.000         10.000      7.000      PS8_X0Y0  shared_pe_i/psu/inst/PS8_i/MAXIGP0ACLK
+Low Pulse Width   Slow    PS8/MAXIGP0ACLK  n/a            1.500         5.000       3.500      PS8_X0Y0  shared_pe_i/psu/inst/PS8_i/MAXIGP0ACLK
+High Pulse Width  Slow    PS8/MAXIGP0ACLK  n/a            1.500         5.000       3.500      PS8_X0Y0  shared_pe_i/psu/inst/PS8_i/MAXIGP0ACLK
+
+
+

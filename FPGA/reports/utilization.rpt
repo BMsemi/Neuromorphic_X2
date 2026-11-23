@@ -1,0 +1,34 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2022.2 (win64) Build 3671981 Fri Oct 14 05:00:03 MDT 2022
+| Date         : Mon Nov 23 13:16:54 2026
+| Host         : H39SRK2-PC running 64-bit major release  (build 9200)
+| Command      : report_utilization -hierarchical -file D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/build/synthesis/utilization.rpt
+| Design       : pe512_system
+| Device       : xczu7ev-ffvc1156-2-e
+| Speed File   : -2
+| Design State : Synthesized
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Utilization Design Information
+
+Table of Contents
+-----------------
+1. Utilization by Hierarchy
+
+1. Utilization by Hierarchy
+---------------------------
+
++-------------------+-----------------+------------+------------+---------+------+-----+--------+--------+------+------------+
+|      Instance     |      Module     | Total LUTs | Logic LUTs | LUTRAMs | SRLs | FFs | RAMB36 | RAMB18 | URAM | DSP Blocks |
++-------------------+-----------------+------------+------------+---------+------+-----+--------+--------+------+------------+
+| pe512_system      |           (top) |       1666 |        802 |     864 |    0 | 463 |      7 |      1 |    0 |          0 |
+|   (pe512_system)  |           (top) |          0 |          0 |       0 |    0 |   0 |      0 |      0 |    0 |          0 |
+|   l2              |  l2_accumulator |       1033 |        201 |     832 |    0 |  42 |      0 |      0 |    0 |          0 |
+|   pe              |      pe512_core |        633 |        601 |      32 |    0 | 421 |      7 |      1 |    0 |          0 |
+|     (pe)          |      pe512_core |        339 |        339 |       0 |    0 | 389 |      7 |      1 |    0 |          0 |
+|     command_fifo  |   shared_fifo32 |        170 |        150 |      20 |    0 |  16 |      0 |      0 |    0 |          0 |
+|     response_fifo | shared_fifo32_0 |        124 |        112 |      12 |    0 |  16 |      0 |      0 |    0 |          0 |
++-------------------+-----------------+------------+------------+---------+------+-----+--------+--------+------+------------+
+
+

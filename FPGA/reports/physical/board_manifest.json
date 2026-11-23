@@ -1,0 +1,17 @@
+{
+  "remote_directory": "/home/xilinx/shared_pe_validation_20261123",
+  "port": "COM17",
+  "files": {
+    "board_validate.py": "509843845a7a44d555bd9a1d7f896534abff5498cb36cc5d7512d0e14ea92c67",
+    "board_mnist.py": "e0c9bac41bc97d7a88c7351204f4634239e3219c01151c7732e581801a321707"
+  },
+  "bitstream_sha256": "dd77fa86c6a1f49b1121b62fd04aed4197250081a38261d37936ab140e610bd3",
+  "rtl_hashes": {
+    "l2_accumulator.v": "3b24d01a64210e10b29b4e07a94bb8756758fa42c4671a06bd0f78b04cccd53d",
+    "pe512_axi.v": "f4a664fe6be9e0b8a1ebcc036d69a30e116070cb3d18975117d79165dd5ef14b",
+    "pe512_core.v": "d9b643948dac178938990e1e81ff4fbfe0e3b33440e01b2168b8a8a1213220be",
+    "pe512_system.v": "3c2c4378c6fe0d35ed9e0a4235814c46c741be0b1017f1d2ac58f3865542fb27",
+    "shared_fifo32.v": "d7178d028402d9c6e18c2e0951c1893b2be8f615785dfb03e0bfaa07bf86b8c5"
+  },
+  "input_checksum": "a54e44af3a7171b21d2766e003af9d52279bf858589c97b0e130326ba20ef5ee  /home/xilinx/qwen6_20261005/mnist_validation_ee44545bba75/validation_inputs.npz"
+}

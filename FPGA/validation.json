@@ -1,0 +1,264 @@
+{
+  "date": "2026-11-23",
+  "top": "shared_pe_wrapper",
+  "pe_top": "pe512_axi",
+  "target": "xczu7ev-ffvc1156-2-e",
+  "tool": "Vivado / XSim 2022.2",
+  "logical_shape": [
+    512,
+    512
+  ],
+  "tile_shape": [
+    32,
+    32
+  ],
+  "tiles": 256,
+  "shared_command_fifos": 1,
+  "shared_response_fifos": 1,
+  "fifo_depth_words": 32,
+  "fifo_word_bits": 32,
+  "rtl_simulation": "pass",
+  "out_of_context_synthesis": "pass",
+  "full_sweep_responses_checked": 8192,
+  "l2_columns_checked": 512,
+  "luts": 1666,
+  "flip_flops": 463,
+  "ramb36": 7,
+  "ramb18": 1,
+  "dsps": 0,
+  "resource_scope": "above utilization is core out-of-context; full routed utilization in physical overlay report",
+  "ps_compute_fallback": false,
+  "placed_and_routed": true,
+  "new_rtl_programmed_on_board": true,
+  "new_rtl_physical_validation": true,
+  "ps_bus_wrapper": "AXI-Lite at 0xA0000000; pe512_axi",
+  "physical_validation": {
+    "physical_fpga": true,
+    "base_address": "0xa0000000",
+    "ps_compute_fallback": false,
+    "magic": "0x53503531",
+    "version": "0x10000",
+    "tests": {
+      "blocked_until_response_32": {
+        "pass": true,
+        "after_31_reads": {
+          "status": 39,
+          "counts": 288,
+          "error": 0,
+          "launches": 1,
+          "responses_read": 31,
+          "discarded": 0,
+          "l2_words": 31
+        }
+      },
+      "all_256_tiles": {
+        "pass": true,
+        "raw_responses_checked": 8192,
+        "l2_columns_checked": 512,
+        "snapshot": {
+          "status": 155,
+          "counts": 0,
+          "error": 0,
+          "launches": 258,
+          "responses_read": 8256,
+          "discarded": 0,
+          "l2_words": 8192
+        }
+      },
+      "zero_input": {
+        "pass": true
+      },
+      "cell_set_read_reset": {
+        "pass": true
+      },
+      "maximum_dot_product_32": {
+        "pass": true
+      },
+      "automatic_drain": {
+        "pass": true
+      },
+      "reset_scrubs_weights": {
+        "pass": true
+      }
+    },
+    "status": "PASS",
+    "elapsed_seconds": 3.5750151351094246,
+    "final": {
+      "status": 155,
+      "counts": 0,
+      "error": 0,
+      "launches": 1,
+      "responses_read": 32,
+      "discarded": 0,
+      "l2_words": 32
+    }
+  },
+  "mnist_validation": {
+    "status": "PASS",
+    "physical_fpga": true,
+    "samples": 100,
+    "exact_first_layer": 100,
+    "exact_hidden": 100,
+    "exact_second_layer": 100,
+    "exact_scores": 100,
+    "exact_predictions": 100,
+    "correct_labels": 93,
+    "input_sha256": "a54e44af3a7171b21d2766e003af9d52279bf858589c97b0e130326ba20ef5ee",
+    "logical_placements": [
+      "FC0 rows 0..511",
+      "FC0 rows 512..783",
+      "FC1"
+    ],
+    "physical_pes": 1,
+    "ps_dot_product_fallback": false,
+    "ps_operations": [
+      "combine two FC0 placement vectors",
+      "threshold",
+      "score offsets",
+      "argmax"
+    ],
+    "schedule": "32 binary input rows per tile; not per-pixel scheduler replay",
+    "counters": [
+      {
+        "status": 155,
+        "counts": 0,
+        "error": 0,
+        "launches": 6400,
+        "responses_read": 204800,
+        "discarded": 0,
+        "l2_words": 2048
+      },
+      {
+        "status": 155,
+        "counts": 0,
+        "error": 0,
+        "launches": 3600,
+        "responses_read": 115200,
+        "discarded": 0,
+        "l2_words": 1152
+      },
+      {
+        "status": 155,
+        "counts": 0,
+        "error": 0,
+        "launches": 400,
+        "responses_read": 12800,
+        "discarded": 0,
+        "l2_words": 128
+      }
+    ],
+    "elapsed_seconds": 11.51666955370456,
+    "per_pixel_schedule_check": {
+      "test_index": 8,
+      "status": "PASS",
+      "fc0_launches": 3136,
+      "fc0_responses": 100352,
+      "fc1_launches": 4,
+      "fc1_responses": 128,
+      "prediction": 5,
+      "scores": [
+        46,
+        33,
+        42,
+        30,
+        49,
+        52,
+        51,
+        32,
+        42,
+        42
+      ],
+      "counters": [
+        {
+          "status": 155,
+          "counts": 0,
+          "error": 0,
+          "launches": 2048,
+          "responses_read": 65536,
+          "discarded": 0,
+          "l2_words": 65536
+        },
+        {
+          "status": 155,
+          "counts": 0,
+          "error": 0,
+          "launches": 1088,
+          "responses_read": 34816,
+          "discarded": 0,
+          "l2_words": 34816
+        },
+        {
+          "status": 155,
+          "counts": 0,
+          "error": 0,
+          "launches": 4,
+          "responses_read": 128,
+          "discarded": 0,
+          "l2_words": 128
+        }
+      ]
+    },
+    "digit_5_example": {
+      "test_index": 8,
+      "label": 5,
+      "prediction": 5,
+      "scores": [
+        46,
+        33,
+        42,
+        30,
+        49,
+        52,
+        51,
+        32,
+        42,
+        42
+      ]
+    }
+  },
+  "files": {
+    "README.md": "ff99cb51a72bd2f28cfa23df839ac26c6712ea1d3c7a08353f94742d40f77c51",
+    "reports/axi_simulation.log": "01e01d157ccc747278643ce8b20aeea438f6f5444b78c3eec3a64d4fcefe849e",
+    "reports/physical/board_before.txt": "fe8c033b4e587e013ef76c4966818cc594d7793663ddf519db11fe8092ce1e3a",
+    "reports/physical/board_manifest.json": "f99311437c429daadccad2c31b29bf995b7946a65a4920e3c8462d3dd6062dce",
+    "reports/physical/board_mnist.py.log": "fcb73f7b953f0d64ceb1f5de438b87b237c12943e986bf73972a1adc14f5dbc1",
+    "reports/physical/board_validate.py.log": "90a1621bd6e055bfa4470c4cca07a520fbf42b089b83c61cc53aac6ea0dacd34",
+    "reports/physical/build.log": "3f604807075ddaa9a7947ce9e025f9477a4e7fee249f93f41c4dfea41a5bf898",
+    "reports/physical/clock_before.txt": "fbb2e3fd4a8580acbdfb5869e2e5515a6ce226ce2f91cdbb1d1914e4455cff55",
+    "reports/physical/deployment.json": "9be854f596205bd5602da15b3d35916db1225a1656984fbaa6e34b21873432fd",
+    "reports/physical/mnist_outputs.npz": "cebb8f299729a4f2ce20c64c55d9a34ac9f3857753f05df23d3cfdb459eef78a",
+    "reports/physical/mnist_validation.json": "fb6ece615effe5b6f5bbff0d4d58df0c48ab521a7e78301e6a9d501b3de5309e",
+    "reports/physical/overlay/drc.rpt": "7c5ff350cd02fb297dfb34673e6871f3d4d741f1b65cc3fad9cb22021a5122d9",
+    "reports/physical/overlay/shared_pe.bit": "dd77fa86c6a1f49b1121b62fd04aed4197250081a38261d37936ab140e610bd3",
+    "reports/physical/overlay/shared_pe.hwh": "89bad4798c2a2e73e8d641754a96200b56be8b2ce94508fe7fb35b1a8e72d4c0",
+    "reports/physical/overlay/timing.rpt": "58826bb1c87c5a8dc6350815ae71ee934e8b2c967ba9e27c275dcbfa56748ab1",
+    "reports/physical/overlay/utilization.rpt": "077e0a5f65b9661608bf140c27fe4757c746d0ffc7ac32fdd0f03c37bc413bc0",
+    "reports/physical/physical_validation.json": "11198035c769d558e624a2a31c0ab625a8ee0fb8465773d65292d64735f42356",
+    "reports/physical/physical_vectors.json": "c2785aff01d6081a45076034f01c98e3ab1df3389dfbe92b53540aad1991a794",
+    "reports/physical/program.log": "73650fdfe3f15bf6f04435d1be0931752dab1d4a6df1cf8f28a2a2fd58d0d4b0",
+    "reports/physical/rtl_build_hashes.json": "6c8196035e22dbc60dd4ae3d0131bac219b6cb9bb6de5aefba7e56ff41e3e841",
+    "reports/simulation.log": "0088fa43c9dffb9d43f56119dbefb9ba5a517fb59825dd3107bddd2836cde526",
+    "reports/synthesis.log": "7fa249ed97ab85d7ea6fec222012bca5220b2fba6ce14ed583d7bbf11aa481ba",
+    "reports/timing_estimate.rpt": "fd73becca90ed275be1e22a6d659b0ae8aa83cea3c1814da5fbb8a639ad9824a",
+    "reports/utilization.rpt": "d4c52ee4eca0b67f12425aa906ec37bca81b90403ebf2d76be8e61e1e6e5c957",
+    "rtl/l2_accumulator.v": "3b24d01a64210e10b29b4e07a94bb8756758fa42c4671a06bd0f78b04cccd53d",
+    "rtl/pe512_axi.v": "f4a664fe6be9e0b8a1ebcc036d69a30e116070cb3d18975117d79165dd5ef14b",
+    "rtl/pe512_core.v": "d9b643948dac178938990e1e81ff4fbfe0e3b33440e01b2168b8a8a1213220be",
+    "rtl/pe512_system.v": "3c2c4378c6fe0d35ed9e0a4235814c46c741be0b1017f1d2ac58f3865542fb27",
+    "rtl/shared_fifo32.v": "d7178d028402d9c6e18c2e0951c1893b2be8f615785dfb03e0bfaa07bf86b8c5",
+    "scripts/board_mnist.py": "e0c9bac41bc97d7a88c7351204f4634239e3219c01151c7732e581801a321707",
+    "scripts/board_validate.py": "509843845a7a44d555bd9a1d7f896534abff5498cb36cc5d7512d0e14ea92c67",
+    "scripts/build_zcu106.tcl": "999eaa90fa0aa138aa73284b726b858d619c8af7a54df08bd7a8a543f6e22346",
+    "scripts/package.py": "59e48ad0ae28a3e9432e528727bf27e9516c670b21734fc044d4445b2f9ef44f",
+    "scripts/program_zcu106.tcl": "699f047569fc70beaeb5cdc1aebe8a0f0490903b79e073536f0314c33e48949e",
+    "scripts/run_axi_sim.ps1": "e8b5eca7ac83a3de847e88272c2f77d1d90ea7d31171813a04de0a6ac27615f7",
+    "scripts/run_board.py": "206bbc201f312575545365e21568fe73f7bfdec52148ef290a6c580f8fc4e1ca",
+    "scripts/run_sim.ps1": "cb99ae6656fd70cae5dee57824514145e9b6a96646f851cf72b48bf9a5571497",
+    "scripts/serial_console.py": "34c020dc9a05ae2a198d08b32bd7df76c995c6d7224e040c64971dc188ab28bf",
+    "scripts/simulate.tcl": "6218ffa4f2392f3c61113605d4ab2cd023186e11f1da826b920e510a9a797efb",
+    "scripts/synthesize.tcl": "70f08b1a243e5e823f2f2c02639bbd26fab7894fdaec96395cdf5f65ab6c7ce3",
+    "sim/tb_pe512_axi.sv": "9dfd9ef472aa745d16d3b962a83ce70b9a9a0cfd94699126f402cb0f102a0a6e",
+    "sim/tb_pe512_system.sv": "1d702a4263057a12149562826b11ffc5e084e3883aca43c04fcb72b2e8e25a08",
+    "validation_inputs.npz": "a54e44af3a7171b21d2766e003af9d52279bf858589c97b0e130326ba20ef5ee"
+  }
+}

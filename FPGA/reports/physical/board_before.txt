@@ -1,0 +1,8 @@
+Linux pynq 5.15.19-xilinx-v2022.1 #1 SMP Mon Apr 11 17:52:14 UTC 2022 aarch64 aarch64 aarch64 GNU/Linux
+operating
+403f78b3866b51e9a27c3e9704cc9d5c1a31f0efdb7a72397069a058be43d5ee  /home/xilinx/qwen6_20261005/fpga/qwen6/overlay/qwen6.bit
+cfa18884e4a4f350e0eb0c45fbe2ab78485dc5114fae2840efa0930d8bf0fcad  /home/xilinx/qwen6_20261005/fpga/qwen6/overlay/qwen6.hwh
+666 /usr/local/share/pynq-venv/bin/python3 /usr/local/share/pynq-venv/bin/jupyter-notebook --no-browser --allow-root
+882 python3 /usr/local/bin/redirect_server
+{"0x4": "0x103", "0x20": "0x58324d56", "0x24": "0x20025"}
+

@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-23",
+  "board": "ZCU106",
+  "jtag_device": "xczu7",
+  "jtag_idcode": "14730093",
+  "jtag_cable_serial": "49646",
+  "pl_clock_hz_reported_by_linux": 99990000,
+  "new_image_left_loaded": true,
+  "linux_ps_reset": false,
+  "bitstream_sha256": "dd77fa86c6a1f49b1121b62fd04aed4197250081a38261d37936ab140e610bd3",
+  "jtag_programming": "End of startup status: HIGH",
+  "program_log_note": "Programming succeeded; optional post-program DONE-property query was unsupported. Removed that query from delivered script. MMIO identity and subsequent physical tests verified the new image.",
+  "host_rechecked_downloaded_mnist_and_l2": true,
+  "setup_slack_ns": 4.443,
+  "hold_slack_ns": 0.022,
+  "drc_violations": 0,
+  "routed_luts": 2579,
+  "routed_registers": 1443,
+  "ramb36": 7,
+  "ramb18": 1,
+  "dsps": 0
+}

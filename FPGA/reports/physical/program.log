@@ -1,0 +1,75 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Mon Nov 23 13:47:47 2026
+# Process ID: 29656
+# Current directory: D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier
+# Command line: vivado.exe -mode batch -source rtl_shared_pe/scripts/program_zcu106.tcl -log rtl_shared_pe/build/physical/program.log -journal rtl_shared_pe/build/physical/program.jou
+# Log file: D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/build/physical/program.log
+# Journal file: D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier\rtl_shared_pe/build/physical/program.jou
+# Running On: H39SRK2-PC, OS: Windows, CPU Frequency: 3600 MHz, CPU Physical cores: 4, Host memory: 17058 MB
+#-----------------------------------------------------------
+source rtl_shared_pe/scripts/program_zcu106.tcl
+# set root [file normalize [file join [file dirname [info script]] ..]]
+# set bit [file join $root build physical overlay shared_pe.bit]
+# if {![file exists $bit]} {set bit [file join $root reports physical overlay shared_pe.bit]}
+# if {[llength $argv]} {set bit [file normalize [lindex $argv 0]]}
+# if {![file exists $bit]} {error "Bitstream missing: $bit"}
+# open_hw_manager
+open_hw_manager: Time (s): cpu = 00:00:06 ; elapsed = 00:00:08 . Memory (MB): peak = 414.664 ; gain = 87.969
+# connect_hw_server -allow_non_jtag
+INFO: [Labtools 27-2285] Connecting to hw_server url TCP:localhost:3121
+INFO: [Labtools 27-2222] Launching hw_server...
+INFO: [Labtools 27-2221] Launch Output:
+
+****** Xilinx hw_server v2022.2
+  **** Build date : Oct 14 2022 at 05:18:10
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+
+INFO: [Labtools 27-3415] Connecting to cs_server url TCP:localhost:0
+INFO: [Labtools 27-3417] Launching cs_server...
+INFO: [Labtools 27-2221] Launch Output:
+
+
+******** Xilinx cs_server v2022.2.0
+  ****** Build date   : Oct 05 2022-07:25:37
+    **** Build number : 2022.2.1664925937
+      ** Copyright 2017-2026 Xilinx, Inc. All Rights Reserved.
+
+
+
+connect_hw_server: Time (s): cpu = 00:00:00 ; elapsed = 00:00:21 . Memory (MB): peak = 439.547 ; gain = 24.883
+# set targets [get_hw_targets -quiet *]
+# if {[llength $targets]!=1} {error "Expected exactly one connected JTAG target: $targets"}
+# open_hw_target [lindex $targets 0]
+INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Xilinx/49646
+open_hw_target: Time (s): cpu = 00:00:00 ; elapsed = 00:00:10 . Memory (MB): peak = 441.910 ; gain = 2.363
+# set matching {}
+# foreach dev [get_hw_devices -quiet] {
+#  set part [get_property PART $dev]
+#  puts "JTAG_DEVICE: $dev PART=$part"
+#  # This ZCU106's JTAG IDCODE 14730093 is exposed as xczu7, without EV suffix.
+#  if {[string tolower $part] in {xczu7 xczu7ev}} {lappend matching $dev}
+# }
+JTAG_DEVICE: xczu7_0 PART=xczu7
+JTAG_DEVICE: arm_dap_1 PART=arm_dap
+# if {[llength $matching]!=1} {error "Expected one xczu7 JTAG device: $matching"}
+# set dev [lindex $matching 0]
+# current_hw_device $dev
+# refresh_hw_device $dev
+INFO: [Labtools 27-1434] Device xczu7 (JTAG device index = 0) is programmed with a design that has no supported debug core(s) in it.
+refresh_hw_device: Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 2634.516 ; gain = 2192.605
+# puts "PROGRAM_TARGET: $dev"
+PROGRAM_TARGET: xczu7_0
+# puts "PROGRAM_FILE: $bit"
+PROGRAM_FILE: D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/build/physical/overlay/shared_pe.bit
+# set_property PROGRAM.FILE $bit $dev
+# program_hw_devices $dev
+INFO: [Labtools 27-3164] End of startup status: HIGH
+program_hw_devices: Time (s): cpu = 00:00:11 ; elapsed = 00:00:11 . Memory (MB): peak = 2635.020 ; gain = 0.504
+# refresh_hw_device $dev
+INFO: [Labtools 27-1434] Device xczu7 (JTAG device index = 0) is programmed with a design that has no supported debug core(s) in it.
+ERROR: [Labtoolstcl 44-56] hw_device [xczu7_0] does not have a [REGISTER.IR.BIT5_DONE] property
+INFO: [Common 17-206] Exiting Vivado at Mon Nov 23 13:49:03 2026...

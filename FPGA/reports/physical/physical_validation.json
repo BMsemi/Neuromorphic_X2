@@ -1,0 +1,61 @@
+{
+  "physical_fpga": true,
+  "base_address": "0xa0000000",
+  "ps_compute_fallback": false,
+  "magic": "0x53503531",
+  "version": "0x10000",
+  "tests": {
+    "blocked_until_response_32": {
+      "pass": true,
+      "after_31_reads": {
+        "status": 39,
+        "counts": 288,
+        "error": 0,
+        "launches": 1,
+        "responses_read": 31,
+        "discarded": 0,
+        "l2_words": 31
+      }
+    },
+    "all_256_tiles": {
+      "pass": true,
+      "raw_responses_checked": 8192,
+      "l2_columns_checked": 512,
+      "snapshot": {
+        "status": 155,
+        "counts": 0,
+        "error": 0,
+        "launches": 258,
+        "responses_read": 8256,
+        "discarded": 0,
+        "l2_words": 8192
+      }
+    },
+    "zero_input": {
+      "pass": true
+    },
+    "cell_set_read_reset": {
+      "pass": true
+    },
+    "maximum_dot_product_32": {
+      "pass": true
+    },
+    "automatic_drain": {
+      "pass": true
+    },
+    "reset_scrubs_weights": {
+      "pass": true
+    }
+  },
+  "status": "PASS",
+  "elapsed_seconds": 3.5750151351094246,
+  "final": {
+    "status": 155,
+    "counts": 0,
+    "error": 0,
+    "launches": 1,
+    "responses_read": 32,
+    "discarded": 0,
+    "l2_words": 32
+  }
+}

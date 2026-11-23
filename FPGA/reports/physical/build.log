@@ -1,0 +1,1929 @@
+#-----------------------------------------------------------
+# Vivado v2022.2 (64-bit)
+# SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
+# IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+# Start of session at: Mon Nov 23 13:33:03 2026
+# Process ID: 17476
+# Current directory: D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier
+# Command line: vivado.exe -mode batch -source rtl_shared_pe/scripts/build_zcu106.tcl -log rtl_shared_pe/build/physical/build.log -journal rtl_shared_pe/build/physical/build.jou
+# Log file: D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier/rtl_shared_pe/build/physical/build.log
+# Journal file: D:/gitt/Neuromorphic_X1/Benchmarking/Neuromorphic_complier\rtl_shared_pe/build/physical/build.jou
+# Running On: H39SRK2-PC, OS: Windows, CPU Frequency: 3600 MHz, CPU Physical cores: 4, Host memory: 17058 MB
+#-----------------------------------------------------------
+source rtl_shared_pe/scripts/build_zcu106.tcl
+# set root [file normalize [file join [file dirname [info script]] ..]]
+# set build D:/fpga_build/shared_pe512_v2
+# if {[info exists ::env(SHARED_PE_BUILD)]} {set build $::env(SHARED_PE_BUILD)}
+# if {[file exists [file join $build shared_pe.xpr]]} {error "Build exists; use a fresh SHARED_PE_BUILD directory"}
+# file mkdir $build
+# create_project shared_pe $build -part xczu7ev-ffvc1156-2-e
+create_project: Time (s): cpu = 00:00:08 ; elapsed = 00:00:16 . Memory (MB): peak = 411.648 ; gain = 92.977
+# set_property board_part xilinx.com:zcu106:part0:2.6 [current_project]
+# set_property target_language Verilog [current_project]
+# file mkdir [file join $build src]
+# foreach source [glob [file join $root rtl *.v]] {
+#  file copy -force $source [file join $build src]
+# }
+# add_files -norecurse [glob [file join $build src *.v]]
+# update_compile_order -fileset sources_1
+# create_bd_design shared_pe
+Wrote  : <D:\fpga_build\shared_pe512_v2\shared_pe.srcs\sources_1\bd\shared_pe\shared_pe.bd> 
+create_bd_design: Time (s): cpu = 00:00:03 ; elapsed = 00:00:08 . Memory (MB): peak = 462.625 ; gain = 23.098
+# create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:* psu
+create_bd_cell: Time (s): cpu = 00:00:07 ; elapsed = 00:00:10 . Memory (MB): peak = 632.625 ; gain = 170.000
+# apply_bd_automation -rule xilinx.com:bd_rule:zynq_ultra_ps_e -config {apply_board_preset "1"} [get_bd_cells psu]
+INFO: [PSU-1]  DP_AUDIO clock source: RPLL is also being used by other peripheral clocks. Their outputs may get impacted if any driver changes DP_AUDIO PLL source to support runtime audio change 
+# set_property -dict [list CONFIG.PSU__USE__M_AXI_GP0 {1} CONFIG.PSU__USE__M_AXI_GP1 {0} CONFIG.PSU__CRL_APB__PL0_REF_CTRL__FREQMHZ {100}] [get_bd_cells psu]
+INFO: [PSU-1]  DP_AUDIO clock source: RPLL is also being used by other peripheral clocks. Their outputs may get impacted if any driver changes DP_AUDIO PLL source to support runtime audio change 
+# create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:* rst_pl
+# create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:* ctrl
+# set_property -dict [list CONFIG.NUM_SI {1} CONFIG.NUM_MI {1}] [get_bd_cells ctrl]
+# create_bd_cell -type module -reference pe512_axi pe
+INFO: [IP_Flow 19-5107] Inferred bus interface 'aclk' of definition 'xilinx.com:signal:clock:1.0' (from X_INTERFACE_INFO parameter from HDL file).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'aclk' of definition 'xilinx.com:signal:clock:1.0' (from 'X_INTERFACE_INFO' attribute).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'aresetn' of definition 'xilinx.com:signal:reset:1.0' (from X_INTERFACE_INFO parameter from HDL file).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'aresetn' of definition 'xilinx.com:signal:reset:1.0' (from 'X_INTERFACE_INFO' attribute).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'S_AXI' of definition 'xilinx.com:interface:aximm:1.0' (from X_INTERFACE_INFO parameter from HDL file).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'S_AXI' of definition 'xilinx.com:interface:aximm:1.0' (from 'X_INTERFACE_INFO' attribute).
+INFO: [IP_Flow 19-4728] Bus Interface 'aclk': Added interface parameter 'ASSOCIATED_BUSIF' with value 'S_AXI'.
+INFO: [IP_Flow 19-4728] Bus Interface 'aclk': Added interface parameter 'ASSOCIATED_RESET' with value 'aresetn'.
+INFO: [IP_Flow 19-4728] Bus Interface 'aresetn': Added interface parameter 'POLARITY' with value 'ACTIVE_LOW'.
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+# foreach pin {psu/maxihpm0_fpd_aclk rst_pl/slowest_sync_clk ctrl/aclk pe/aclk} {
+#  connect_bd_net [get_bd_pins psu/pl_clk0] [get_bd_pins $pin]
+# }
+# connect_bd_net [get_bd_pins psu/pl_resetn0] [get_bd_pins rst_pl/ext_reset_in]
+# connect_bd_net [get_bd_pins rst_pl/peripheral_aresetn] [get_bd_pins ctrl/aresetn] [get_bd_pins pe/aresetn]
+# connect_bd_intf_net [get_bd_intf_pins psu/M_AXI_HPM0_FPD] [get_bd_intf_pins ctrl/S00_AXI]
+# connect_bd_intf_net [get_bd_intf_pins ctrl/M00_AXI] [get_bd_intf_pins pe/S_AXI]
+# assign_bd_address -offset 0xA0000000 -range 64K -target_address_space [get_bd_addr_spaces psu/Data] [get_bd_addr_segs pe/S_AXI/reg0] -force
+Slave segment '/pe/S_AXI/reg0' is being assigned into address space '/psu/Data' at <0xA000_0000 [ 64K ]>.
+# validate_bd_design
+INFO: [PSU-1]  DP_AUDIO clock source: RPLL is also being used by other peripheral clocks. Their outputs may get impacted if any driver changes DP_AUDIO PLL source to support runtime audio change 
+INFO: [xilinx.com:ip:smartconnect:1.0-1] shared_pe_ctrl_0: SmartConnect shared_pe_ctrl_0 is in Low-Area Mode.
+WARNING: [xilinx.com:ip:smartconnect:1.0-1] shared_pe_ctrl_0: IP shared_pe_ctrl_0 is configured in Low-area mode as all propagated traffic is low-bandwidth (AXI4LITE). SI S00_AXI has property HAS_BURST == 1. WRAP bursts are not supported in Low-area mode and will result in DECERR if received.
+WARNING: [xilinx.com:ip:smartconnect:1.0-1] shared_pe_ctrl_0: If WRAP transactions are required then turn off Low-area mode using ADVANCED_PROPERTIES. Execute following: set_property CONFIG.ADVANCED_PROPERTIES {__experimental_features__ {disable_low_area_mode 1}} [get_bd_cells /shared_pe_ctrl_0]
+# save_bd_design
+Wrote  : <D:\fpga_build\shared_pe512_v2\shared_pe.srcs\sources_1\bd\shared_pe\shared_pe.bd> 
+# set bd [get_files -all */shared_pe.bd]
+# set_property synth_checkpoint_mode None $bd
+# generate_target all $bd
+INFO: [BD 41-1662] The design 'shared_pe.bd' is already validated. Therefore parameter propagation will not be re-run.
+Verilog Output written to : D:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/synth/shared_pe.v
+Verilog Output written to : D:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/sim/shared_pe.v
+Verilog Output written to : D:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/hdl/shared_pe_wrapper.v
+INFO: [xilinx.com:ip:zynq_ultra_ps_e:3.4-0] shared_pe_psu_0: 
+Changes in your design (including the PCW configuration settings) are not automatically exported from Vivado to Xilinx's SDK, Petalinux or Yocto.
+This is by design to avoid disrupting existing embedded development efforts. To have any changes of your design taking effect in the embedded software flow please export your
+design by going through Vivado's main menu, click on File, then Export finally select Export Hardware, please ensure you click on the Include BitStream option.
+The auto-generated HDF file is all you need to import in Xilinx's SDK, Petalinux or Yocto for your changes to be reflected in the Embedded Software Flow.
+For more information, please consult PG201, section: Exporting PCW Settings to Embedded Software Flows
+INFO: [PSU-0] Address Range of DDR (0x7ff00000 to 0x7fffffff) is reserved by PMU for internal purpose.
+INFO: [IP_Flow 19-5611] Unable to find an associated reset port for the interface 'M_AXI_HPM0_FPD'. A default connection has been created.
+INFO: [BD 41-1029] Generation completed for the IP Integrator block psu .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block rst_pl .
+Exporting to file d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/hw_handoff/shared_pe_ctrl_0.hwh
+Generated Hardware Definition File d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/shared_pe_ctrl_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ctrl .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block pe .
+Exporting to file D:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/hw_handoff/shared_pe.hwh
+Generated Hardware Definition File D:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/synth/shared_pe.hwdef
+generate_target: Time (s): cpu = 00:00:56 ; elapsed = 00:01:12 . Memory (MB): peak = 959.410 ; gain = 306.094
+# add_files -norecurse [make_wrapper -files $bd -top]
+# set_property top shared_pe_wrapper [get_filesets sources_1]
+# update_compile_order -fileset sources_1
+# set_param general.maxThreads 2
+# launch_runs synth_1 -jobs 2
+WARNING: [Vivado 12-7122] Auto Incremental Compile:: No reference checkpoint was found in run synth_1. Auto-incremental flow will not be run, the standard flow will be run instead.
+[Mon Nov 23 13:35:16 2026] Launched synth_1...
+Run output will be captured here: D:/fpga_build/shared_pe512_v2/shared_pe.runs/synth_1/runme.log
+# wait_on_run synth_1
+[Mon Nov 23 13:35:16 2026] Waiting for synth_1 to finish...
+
+*** Running vivado
+    with args -log shared_pe_wrapper.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source shared_pe_wrapper.tcl
+
+
+
+****** Vivado v2022.2 (64-bit)
+  **** SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
+  **** IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+source shared_pe_wrapper.tcl -notrace
+create_project: Time (s): cpu = 00:00:07 ; elapsed = 00:00:08 . Memory (MB): peak = 411.457 ; gain = 80.770
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/Vivado/2022.2/data/ip'.
+INFO: [IP_Flow 19-5107] Inferred bus interface 'aclk' of definition 'xilinx.com:signal:clock:1.0' (from X_INTERFACE_INFO parameter from HDL file).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'aclk' of definition 'xilinx.com:signal:clock:1.0' (from 'X_INTERFACE_INFO' attribute).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'aresetn' of definition 'xilinx.com:signal:reset:1.0' (from X_INTERFACE_INFO parameter from HDL file).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'aresetn' of definition 'xilinx.com:signal:reset:1.0' (from 'X_INTERFACE_INFO' attribute).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'S_AXI' of definition 'xilinx.com:interface:aximm:1.0' (from X_INTERFACE_INFO parameter from HDL file).
+INFO: [IP_Flow 19-5107] Inferred bus interface 'S_AXI' of definition 'xilinx.com:interface:aximm:1.0' (from 'X_INTERFACE_INFO' attribute).
+INFO: [IP_Flow 19-4728] Bus Interface 'aclk': Added interface parameter 'ASSOCIATED_BUSIF' with value 'S_AXI'.
+INFO: [IP_Flow 19-4728] Bus Interface 'aclk': Added interface parameter 'ASSOCIATED_RESET' with value 'aresetn'.
+INFO: [IP_Flow 19-4728] Bus Interface 'aresetn': Added interface parameter 'POLARITY' with value 'ACTIVE_LOW'.
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+add_files: Time (s): cpu = 00:00:05 ; elapsed = 00:00:11 . Memory (MB): peak = 491.328 ; gain = 79.871
+Command: synth_design -top shared_pe_wrapper -part xczu7ev-ffvc1156-2-e
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xczu7ev'
+INFO: [Device 21-403] Loading part xczu7ev-ffvc1156-2-e
+INFO: [Synth 8-7079] Multithreading enabled for synth_design using a maximum of 2 processes.
+INFO: [Synth 8-7078] Launching helper process for spawning children vivado processes
+INFO: [Synth 8-7075] Helper process launched with PID 20396
+INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [C:/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
+WARNING: [Synth 8-11067] parameter 'K_MAX_EP_ROUTE_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:87]
+WARNING: [Synth 8-11067] parameter 'K_MAX_SC_ROUTE_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:88]
+WARNING: [Synth 8-11067] parameter 'K_MAX_CMD_PTR' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:89]
+WARNING: [Synth 8-11067] parameter 'K_MAX_LUTRAM_PTR' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:90]
+WARNING: [Synth 8-11067] parameter 'K_MAX_BRAM_PTR' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:91]
+WARNING: [Synth 8-11067] parameter 'K_MIN_BRAM_PTR' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:92]
+WARNING: [Synth 8-11067] parameter 'K_MAX_SYNC_RATIO' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:93]
+WARNING: [Synth 8-11067] parameter 'K_MAX_PIPELINES' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:94]
+WARNING: [Synth 8-11067] parameter 'K_LOG_MAX_PIPELINES' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:95]
+WARNING: [Synth 8-11067] parameter 'K_MAX_LATENCY' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:96]
+WARNING: [Synth 8-11067] parameter 'K_LOG_MAX_LATENCY' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:97]
+WARNING: [Synth 8-11067] parameter 'K_AXIS_ARB_TDATA_NUM_BYTES' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:98]
+WARNING: [Synth 8-11067] parameter 'K_MAX_USER_BITS_PER_BYTE' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:99]
+WARNING: [Synth 8-11067] parameter 'K_MAX_INFO_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:100]
+WARNING: [Synth 8-11067] parameter 'K_MAX_OUTSTANDING_REQ' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:101]
+WARNING: [Synth 8-11067] parameter 'K_AXI_SIZE_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:102]
+WARNING: [Synth 8-11067] parameter 'K_AXI_BURST_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:103]
+WARNING: [Synth 8-11067] parameter 'K_AXI_RESP_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:104]
+WARNING: [Synth 8-11067] parameter 'K_AXI_LAST_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:105]
+WARNING: [Synth 8-11067] parameter 'K_AXI_LEN_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:106]
+WARNING: [Synth 8-11067] parameter 'K_AXI_EXCL_LEN_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:107]
+WARNING: [Synth 8-11067] parameter 'K_AXI_LOCK_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:108]
+WARNING: [Synth 8-11067] parameter 'K_AXI3_LEN_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:109]
+WARNING: [Synth 8-11067] parameter 'K_AXI3_LOCK_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:110]
+WARNING: [Synth 8-11067] parameter 'K_AXI_PROT_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:111]
+WARNING: [Synth 8-11067] parameter 'K_AXI_QOS_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:112]
+WARNING: [Synth 8-11067] parameter 'K_AXI_CACHE_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:113]
+WARNING: [Synth 8-11067] parameter 'K_MAX_ACCEPTANCE' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:114]
+WARNING: [Synth 8-11067] parameter 'K_MAX_FANOUT' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:115]
+WARNING: [Synth 8-11067] parameter 'K_MAX_READ_WATERMARK' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:116]
+WARNING: [Synth 8-11067] parameter 'K_MAX_BURST_LENGTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:117]
+WARNING: [Synth 8-11067] parameter 'CH_R' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:164]
+WARNING: [Synth 8-11067] parameter 'CH_W' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:165]
+WARNING: [Synth 8-11067] parameter 'CH_AR' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:166]
+WARNING: [Synth 8-11067] parameter 'CH_AW' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:167]
+WARNING: [Synth 8-11067] parameter 'CH_B' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:168]
+WARNING: [Synth 8-11067] parameter 'CLK_DOWN' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:170]
+WARNING: [Synth 8-11067] parameter 'CLK_SYNC_ALIAS' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:171]
+WARNING: [Synth 8-11067] parameter 'CLK_ASYNC' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:172]
+WARNING: [Synth 8-11067] parameter 'CLK_SYNC' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:173]
+WARNING: [Synth 8-11067] parameter 'CLK_UP' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:174]
+WARNING: [Synth 8-11067] parameter 'CLKEN_NONE' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:176]
+WARNING: [Synth 8-11067] parameter 'CLKEN_S' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:177]
+WARNING: [Synth 8-11067] parameter 'CLKEN_M' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:178]
+WARNING: [Synth 8-11067] parameter 'CLKEN_S_AND_M' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:179]
+WARNING: [Synth 8-11067] parameter 'ARB_BYPASS' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:180]
+WARNING: [Synth 8-11067] parameter 'ARB_ROUNDROBIN' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:181]
+WARNING: [Synth 8-11067] parameter 'ARB_SLAVE' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:182]
+WARNING: [Synth 8-11067] parameter 'FIFO_LUTRAM' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:183]
+WARNING: [Synth 8-11067] parameter 'FIFO_BRAM' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:184]
+WARNING: [Synth 8-11067] parameter 'FIFO_NONE' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:185]
+WARNING: [Synth 8-11067] parameter 'FIFO_IP_XPM_MEMORY' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:186]
+WARNING: [Synth 8-11067] parameter 'FIFO_IP_FG' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:187]
+WARNING: [Synth 8-11067] parameter 'FIFO_IP_XPM_FIFO' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:188]
+WARNING: [Synth 8-11067] parameter 'K_T_STRUCT_EXCLUSIVE_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:230]
+WARNING: [Synth 8-11067] parameter 'K_T_STATIC_ADDR_PAYLD_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:232]
+WARNING: [Synth 8-11067] parameter 'K_T_STATIC_RDATA_PAYLD_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:240]
+WARNING: [Synth 8-11067] parameter 'K_T_STATIC_WDATA_PAYLD_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:244]
+WARNING: [Synth 8-11067] parameter 'K_T_STATIC_BRSP_PAYLD_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:247]
+WARNING: [Synth 8-11067] parameter 'K_T_EXCLUSIVE_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:253]
+WARNING: [Synth 8-11067] parameter 'K_T_ADDR_AUGMENT_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:256]
+WARNING: [Synth 8-11067] parameter 'K_T_DATA_AUGMENT_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:259]
+WARNING: [Synth 8-11067] parameter 'K_T_BRSP_AUGMENT_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:261]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_ADDR_CASCADE_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:263]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_DATA_CASCADE_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:265]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_BRSP_CASCADE_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:267]
+WARNING: [Synth 8-11067] parameter 'K_T_CASCADE_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:270]
+WARNING: [Synth 8-11067] parameter 'K_T_SEG_LEN_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:304]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_ADDR_SIDEBAND_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:305]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_DATA_SIDEBAND_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:308]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_BRSP_SIDEBAND_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:310]
+WARNING: [Synth 8-11067] parameter 'K_T_SIDEBAND_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:313]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_AXPAYLD_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:341]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_WPAYLD_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:348]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_RPAYLD_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:352]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_BPAYLD_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:357]
+WARNING: [Synth 8-11067] parameter 'K_T_PAYLD_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:361]
+WARNING: [Synth 8-11067] parameter 'K_MAX_PAYLD_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:362]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_AXVECTOR_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:547]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_WVECTOR_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:557]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_RVECTOR_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:561]
+WARNING: [Synth 8-11067] parameter 'K_USABLE_T_BVECTOR_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:566]
+WARNING: [Synth 8-11067] parameter 'K_STATIC_AXVECTOR_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:574]
+WARNING: [Synth 8-11067] parameter 'K_STATIC_WVECTOR_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:584]
+WARNING: [Synth 8-11067] parameter 'K_STATIC_RVECTOR_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:588]
+WARNING: [Synth 8-11067] parameter 'K_STATIC_BVECTOR_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:593]
+WARNING: [Synth 8-11067] parameter 'K_T_VECTOR_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:596]
+WARNING: [Synth 8-11067] parameter 'K_MAX_VECTOR_WIDTH' declared inside package 'sc_util_v1_0_4_pkg' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:597]
+WARNING: [Synth 8-11067] parameter 'K_MAX_NUM_MNOC' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:674]
+WARNING: [Synth 8-11067] parameter 'K_MAX_NUM_SNOC' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:675]
+WARNING: [Synth 8-11067] parameter 'NOC_MAX_SCHED_LEN' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:676]
+WARNING: [Synth 8-11067] parameter 'NOC_MAX_TKN_WIDTH' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:677]
+WARNING: [Synth 8-11067] parameter 'NOC_MAX_RTR_ADDR_WIDTH' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:678]
+WARNING: [Synth 8-11067] parameter 'NOC_PORT_EJECT' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:679]
+WARNING: [Synth 8-11067] parameter 'NOC_PORT_ASCEND' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:680]
+WARNING: [Synth 8-11067] parameter 'NOC_PORT_DESCEND' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:681]
+WARNING: [Synth 8-11067] parameter 'NOC_PORT_THROUGH' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:682]
+WARNING: [Synth 8-11067] parameter 'NOC_TOKEN_THROUGH' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:683]
+WARNING: [Synth 8-11067] parameter 'NOC_TOKEN_ASCEND' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:684]
+WARNING: [Synth 8-11067] parameter 'NOC_TOKEN_DESCEND' declared inside package 'sc_util_v1_0_4_pkg_noc' shall be treated as localparam [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/f0b6/hdl/sc_util_v1_0_vl_rfs.sv:685]
+INFO: [Common 17-14] Message 'Synth 8-11067' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+WARNING: [Synth 8-11014] non-net output port 'upsizer_valid' cannot be initialized at declaration in SystemVerilog mode [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/66be/hdl/sc_node_v1_0_vl_rfs.sv:2589]
+INFO: [Synth 8-11241] undeclared symbol 'dp_audi_ref_clk', assumed default net type 'wire' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:2517]
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:11 ; elapsed = 00:00:12 . Memory (MB): peak = 1960.504 ; gain = 339.160
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'shared_pe_wrapper' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/hdl/shared_pe_wrapper.v:12]
+INFO: [Synth 8-6157] synthesizing module 'shared_pe' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/synth/shared_pe.v:12]
+INFO: [Synth 8-6157] synthesizing module 'shared_pe_ctrl_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/synth/shared_pe_ctrl_0.v:53]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:9]
+INFO: [Synth 8-6157] synthesizing module 'clk_map_imp_1A9JW5P' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:723]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_one_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_0/synth/bd_edd6_one_0.v:53]
+INFO: [Synth 8-6157] synthesizing module 'xlconstant_v1_1_7_xlconstant' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/badb/hdl/xlconstant_v1_1_vl_rfs.v:23]
+INFO: [Synth 8-6155] done synthesizing module 'xlconstant_v1_1_7_xlconstant' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/badb/hdl/xlconstant_v1_1_vl_rfs.v:23]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_one_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_0/synth/bd_edd6_one_0.v:53]
+INFO: [Synth 8-638] synthesizing module 'bd_edd6_psr_aclk_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_1/synth/bd_edd6_psr_aclk_0.vhd:74]
+	Parameter C_FAMILY bound to: zynquplus - type: string 
+	Parameter C_EXT_RST_WIDTH bound to: 4 - type: integer 
+	Parameter C_AUX_RST_WIDTH bound to: 1 - type: integer 
+	Parameter C_EXT_RESET_HIGH bound to: 1'b0 
+	Parameter C_AUX_RESET_HIGH bound to: 1'b0 
+	Parameter C_NUM_BUS_RST bound to: 1 - type: integer 
+	Parameter C_NUM_PERP_RST bound to: 1 - type: integer 
+	Parameter C_NUM_INTERCONNECT_ARESETN bound to: 1 - type: integer 
+	Parameter C_NUM_PERP_ARESETN bound to: 1 - type: integer 
+INFO: [Synth 8-3491] module 'proc_sys_reset' declared at 'd:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1264' bound to instance 'U0' of component 'proc_sys_reset' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_1/synth/bd_edd6_psr_aclk_0.vhd:129]
+INFO: [Synth 8-638] synthesizing module 'proc_sys_reset' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1323]
+	Parameter INIT bound to: 1'b1 
+INFO: [Synth 8-113] binding component instance 'FDRE_inst' to cell 'FDRE' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1392]
+	Parameter INIT bound to: 1'b1 
+INFO: [Synth 8-113] binding component instance 'FDRE_BSR' to cell 'FDRE' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1408]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-113] binding component instance 'FDRE_BSR_N' to cell 'FDRE' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1434]
+	Parameter INIT bound to: 1'b1 
+INFO: [Synth 8-113] binding component instance 'FDRE_PER' to cell 'FDRE' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1457]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-113] binding component instance 'FDRE_PER_N' to cell 'FDRE' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1481]
+INFO: [Synth 8-638] synthesizing module 'lpf' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:816]
+INFO: [Synth 8-3491] module 'SRL16' declared at 'C:/Vivado/2022.2/scripts/rt/data/unisim_comp.v:131628' bound to instance 'POR_SRL_I' of component 'SRL16' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:868]
+INFO: [Synth 8-6157] synthesizing module 'SRL16' [C:/Vivado/2022.2/scripts/rt/data/unisim_comp.v:131628]
+INFO: [Synth 8-6155] done synthesizing module 'SRL16' (0#1) [C:/Vivado/2022.2/scripts/rt/data/unisim_comp.v:131628]
+INFO: [Synth 8-638] synthesizing module 'cdc_sync' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/ef1e/hdl/lib_cdc_v1_0_rfs.vhd:106]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-113] binding component instance 'CROSS_PLEVEL_IN2SCNDRY_IN_cdc_to' to cell 'FDR' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/ef1e/hdl/lib_cdc_v1_0_rfs.vhd:514]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-113] binding component instance 'CROSS_PLEVEL_IN2SCNDRY_s_level_out_d2' to cell 'FDR' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/ef1e/hdl/lib_cdc_v1_0_rfs.vhd:545]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-113] binding component instance 'CROSS_PLEVEL_IN2SCNDRY_s_level_out_d3' to cell 'FDR' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/ef1e/hdl/lib_cdc_v1_0_rfs.vhd:554]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-113] binding component instance 'CROSS_PLEVEL_IN2SCNDRY_s_level_out_d4' to cell 'FDR' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/ef1e/hdl/lib_cdc_v1_0_rfs.vhd:564]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-113] binding component instance 'CROSS_PLEVEL_IN2SCNDRY_s_level_out_d5' to cell 'FDR' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/ef1e/hdl/lib_cdc_v1_0_rfs.vhd:574]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-113] binding component instance 'CROSS_PLEVEL_IN2SCNDRY_s_level_out_d6' to cell 'FDR' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/ef1e/hdl/lib_cdc_v1_0_rfs.vhd:584]
+INFO: [Synth 8-256] done synthesizing module 'cdc_sync' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/ef1e/hdl/lib_cdc_v1_0_rfs.vhd:106]
+INFO: [Synth 8-256] done synthesizing module 'lpf' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:816]
+INFO: [Synth 8-638] synthesizing module 'sequence_psr' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:301]
+INFO: [Synth 8-638] synthesizing module 'upcnt_n' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:125]
+INFO: [Synth 8-256] done synthesizing module 'upcnt_n' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:125]
+INFO: [Synth 8-256] done synthesizing module 'sequence_psr' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:301]
+INFO: [Synth 8-256] done synthesizing module 'proc_sys_reset' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1323]
+INFO: [Synth 8-256] done synthesizing module 'bd_edd6_psr_aclk_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_1/synth/bd_edd6_psr_aclk_0.vhd:74]
+WARNING: [Synth 8-7071] port 'mb_reset' of module 'bd_edd6_psr_aclk_0' is unconnected for instance 'psr_aclk' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:758]
+WARNING: [Synth 8-7071] port 'bus_struct_reset' of module 'bd_edd6_psr_aclk_0' is unconnected for instance 'psr_aclk' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:758]
+WARNING: [Synth 8-7071] port 'peripheral_reset' of module 'bd_edd6_psr_aclk_0' is unconnected for instance 'psr_aclk' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:758]
+WARNING: [Synth 8-7071] port 'peripheral_aresetn' of module 'bd_edd6_psr_aclk_0' is unconnected for instance 'psr_aclk' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:758]
+WARNING: [Synth 8-7023] instance 'psr_aclk' of module 'bd_edd6_psr_aclk_0' has 10 connections declared, but only 6 given [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:758]
+INFO: [Synth 8-6155] done synthesizing module 'clk_map_imp_1A9JW5P' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:723]
+INFO: [Synth 8-6157] synthesizing module 'm00_exit_pipeline_imp_Q3M8UU' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:767]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_m00e_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_12/synth/bd_edd6_m00e_0.sv:53]
+INFO: [Synth 8-6157] synthesizing module 'xpm_cdc_async_rst' [C:/Vivado/2022.2/data/ip/xpm/xpm_cdc/hdl/xpm_cdc.sv:1174]
+INFO: [Synth 8-6155] done synthesizing module 'xpm_cdc_async_rst' (0#1) [C:/Vivado/2022.2/data/ip/xpm/xpm_cdc/hdl/xpm_cdc.sv:1174]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_m00e_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_12/synth/bd_edd6_m00e_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'm00_exit_pipeline_imp_Q3M8UU' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:767]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_m00s2a_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_11/synth/bd_edd6_m00s2a_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_m00s2a_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_11/synth/bd_edd6_m00s2a_0.sv:53]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_s00a2s_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_5/synth/bd_edd6_s00a2s_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_s00a2s_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_5/synth/bd_edd6_s00a2s_0.sv:53]
+INFO: [Synth 8-6157] synthesizing module 's00_entry_pipeline_imp_1PDPMXH' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:1068]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_s00mmu_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_2/synth/bd_edd6_s00mmu_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_s00mmu_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_2/synth/bd_edd6_s00mmu_0.sv:53]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_s00sic_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_4/synth/bd_edd6_s00sic_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_s00sic_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_4/synth/bd_edd6_s00sic_0.sv:53]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_s00tr_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_3/synth/bd_edd6_s00tr_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_s00tr_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_3/synth/bd_edd6_s00tr_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 's00_entry_pipeline_imp_1PDPMXH' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:1068]
+INFO: [Synth 8-6157] synthesizing module 's00_nodes_imp_1JMT45R' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:1727]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_sarn_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_6/synth/bd_edd6_sarn_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_sarn_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_6/synth/bd_edd6_sarn_0.sv:53]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_sawn_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_8/synth/bd_edd6_sawn_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_sawn_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_8/synth/bd_edd6_sawn_0.sv:53]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_sbn_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_10/synth/bd_edd6_sbn_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_sbn_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_10/synth/bd_edd6_sbn_0.sv:53]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_srn_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_7/synth/bd_edd6_srn_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_srn_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_7/synth/bd_edd6_srn_0.sv:53]
+INFO: [Synth 8-6157] synthesizing module 'bd_edd6_swn_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_9/synth/bd_edd6_swn_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6_swn_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_9/synth/bd_edd6_swn_0.sv:53]
+INFO: [Synth 8-6155] done synthesizing module 's00_nodes_imp_1JMT45R' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:1727]
+INFO: [Synth 8-6155] done synthesizing module 'bd_edd6' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:9]
+INFO: [Synth 8-6155] done synthesizing module 'shared_pe_ctrl_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/synth/shared_pe_ctrl_0.v:53]
+INFO: [Synth 8-6157] synthesizing module 'shared_pe_pe_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_pe_0/synth/shared_pe_pe_0.v:53]
+INFO: [Synth 8-6157] synthesizing module 'pe512_axi' [D:/fpga_build/shared_pe512_v2/src/pe512_axi.v:3]
+INFO: [Synth 8-6157] synthesizing module 'pe512_system' [D:/fpga_build/shared_pe512_v2/src/pe512_system.v:3]
+INFO: [Synth 8-6157] synthesizing module 'pe512_core' [D:/fpga_build/shared_pe512_v2/src/pe512_core.v:4]
+INFO: [Synth 8-6157] synthesizing module 'shared_fifo32' [D:/fpga_build/shared_pe512_v2/src/shared_fifo32.v:3]
+INFO: [Synth 8-6155] done synthesizing module 'shared_fifo32' (0#1) [D:/fpga_build/shared_pe512_v2/src/shared_fifo32.v:3]
+INFO: [Synth 8-6155] done synthesizing module 'pe512_core' (0#1) [D:/fpga_build/shared_pe512_v2/src/pe512_core.v:4]
+INFO: [Synth 8-6157] synthesizing module 'l2_accumulator' [D:/fpga_build/shared_pe512_v2/src/l2_accumulator.v:3]
+INFO: [Synth 8-6155] done synthesizing module 'l2_accumulator' (0#1) [D:/fpga_build/shared_pe512_v2/src/l2_accumulator.v:3]
+INFO: [Synth 8-6155] done synthesizing module 'pe512_system' (0#1) [D:/fpga_build/shared_pe512_v2/src/pe512_system.v:3]
+INFO: [Synth 8-155] case statement is not full and has no default [D:/fpga_build/shared_pe512_v2/src/pe512_axi.v:83]
+INFO: [Synth 8-6155] done synthesizing module 'pe512_axi' (0#1) [D:/fpga_build/shared_pe512_v2/src/pe512_axi.v:3]
+INFO: [Synth 8-6155] done synthesizing module 'shared_pe_pe_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_pe_0/synth/shared_pe_pe_0.v:53]
+INFO: [Synth 8-6157] synthesizing module 'shared_pe_psu_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/synth/shared_pe_psu_0.v:53]
+INFO: [Synth 8-6157] synthesizing module 'zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:68]
+INFO: [Synth 8-6157] synthesizing module 'BUFG_PS' [C:/Vivado/2022.2/scripts/rt/data/unisim_comp.v:1317]
+INFO: [Synth 8-6155] done synthesizing module 'BUFG_PS' (0#1) [C:/Vivado/2022.2/scripts/rt/data/unisim_comp.v:1317]
+INFO: [Synth 8-6157] synthesizing module 'PS8' [C:/Vivado/2022.2/scripts/rt/data/unisim_comp.v:110670]
+INFO: [Synth 8-6155] done synthesizing module 'PS8' (0#1) [C:/Vivado/2022.2/scripts/rt/data/unisim_comp.v:110670]
+WARNING: [Synth 8-689] width (5) of port connection 'EMIOSDIO0DATAOUT' does not match port width (8) of module 'PS8' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:4702]
+WARNING: [Synth 8-689] width (5) of port connection 'EMIOSDIO0DATAENA' does not match port width (8) of module 'PS8' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:4703]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTTXN0OUT' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTTXN1OUT' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTTXN2OUT' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTTXN3OUT' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTTXP0OUT' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTTXP1OUT' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTTXP2OUT' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTTXP3OUT' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_PADO' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_BOOTMODE' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_CLK' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DONEB' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMA' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMACTN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMALERTN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMBA' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMBG' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMCK' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMCKE' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMCKN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMCSN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMDM' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMDQ' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMDQS' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMDQSN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMODT' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMPARITY' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_DRAMRAMRSTN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_ERROROUT' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_ERRORSTATUS' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_INITB' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_JTAGTCK' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_JTAGTDI' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_JTAGTDO' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_JTAGTMS' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MIO' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_PORB' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_PROGB' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_RCALIBINOUT' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_SRSTB' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_ZQ' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTRXN0IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTRXN1IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTRXN2IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTRXN3IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTRXP0IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTRXP1IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTRXP2IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_MGTRXP3IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_PADI' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_REFN0IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_REFN1IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_REFN2IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_REFN3IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_REFP0IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_REFP1IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_REFP2IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7071] port 'PSS_ALTO_CORE_PAD_REFP3IN' of module 'PS8' is unconnected for instance 'PS8_i' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+WARNING: [Synth 8-7023] instance 'PS8_i' of module 'PS8' has 1015 connections declared, but only 957 given [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:3892]
+INFO: [Synth 8-6155] done synthesizing module 'zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:68]
+WARNING: [Synth 8-7071] port 'emio_enet0_signal_detect' of module 'zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e' is unconnected for instance 'inst' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/synth/shared_pe_psu_0.v:236]
+WARNING: [Synth 8-7071] port 'emio_enet1_signal_detect' of module 'zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e' is unconnected for instance 'inst' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/synth/shared_pe_psu_0.v:236]
+WARNING: [Synth 8-7071] port 'emio_enet2_signal_detect' of module 'zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e' is unconnected for instance 'inst' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/synth/shared_pe_psu_0.v:236]
+WARNING: [Synth 8-7071] port 'emio_enet3_signal_detect' of module 'zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e' is unconnected for instance 'inst' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/synth/shared_pe_psu_0.v:236]
+WARNING: [Synth 8-7023] instance 'inst' of module 'zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e' has 1491 connections declared, but only 1487 given [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/synth/shared_pe_psu_0.v:236]
+INFO: [Synth 8-6155] done synthesizing module 'shared_pe_psu_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/synth/shared_pe_psu_0.v:53]
+INFO: [Synth 8-638] synthesizing module 'shared_pe_rst_pl_0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_rst_pl_0/synth/shared_pe_rst_pl_0.vhd:74]
+	Parameter C_FAMILY bound to: zynquplus - type: string 
+	Parameter C_EXT_RST_WIDTH bound to: 4 - type: integer 
+	Parameter C_AUX_RST_WIDTH bound to: 4 - type: integer 
+	Parameter C_EXT_RESET_HIGH bound to: 1'b0 
+	Parameter C_AUX_RESET_HIGH bound to: 1'b0 
+	Parameter C_NUM_BUS_RST bound to: 1 - type: integer 
+	Parameter C_NUM_PERP_RST bound to: 1 - type: integer 
+	Parameter C_NUM_INTERCONNECT_ARESETN bound to: 1 - type: integer 
+	Parameter C_NUM_PERP_ARESETN bound to: 1 - type: integer 
+INFO: [Synth 8-3491] module 'proc_sys_reset' declared at 'd:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1264' bound to instance 'U0' of component 'proc_sys_reset' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_rst_pl_0/synth/shared_pe_rst_pl_0.vhd:129]
+INFO: [Synth 8-638] synthesizing module 'proc_sys_reset__parameterized1' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1323]
+	Parameter INIT bound to: 1'b1 
+INFO: [Synth 8-113] binding component instance 'FDRE_inst' to cell 'FDRE' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1392]
+	Parameter INIT bound to: 1'b1 
+INFO: [Synth 8-113] binding component instance 'FDRE_BSR' to cell 'FDRE' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1408]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-113] binding component instance 'FDRE_BSR_N' to cell 'FDRE' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1434]
+	Parameter INIT bound to: 1'b1 
+INFO: [Synth 8-113] binding component instance 'FDRE_PER' to cell 'FDRE' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1457]
+	Parameter INIT bound to: 1'b0 
+INFO: [Synth 8-113] binding component instance 'FDRE_PER_N' to cell 'FDRE' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1481]
+INFO: [Synth 8-638] synthesizing module 'lpf__parameterized0' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:816]
+INFO: [Synth 8-3491] module 'SRL16' declared at 'C:/Vivado/2022.2/scripts/rt/data/unisim_comp.v:131628' bound to instance 'POR_SRL_I' of component 'SRL16' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:868]
+INFO: [Synth 8-256] done synthesizing module 'lpf__parameterized0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:816]
+INFO: [Synth 8-256] done synthesizing module 'proc_sys_reset__parameterized1' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ipshared/8842/hdl/proc_sys_reset_v5_0_vh_rfs.vhd:1323]
+INFO: [Synth 8-256] done synthesizing module 'shared_pe_rst_pl_0' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_rst_pl_0/synth/shared_pe_rst_pl_0.vhd:74]
+WARNING: [Synth 8-7071] port 'mb_reset' of module 'shared_pe_rst_pl_0' is unconnected for instance 'rst_pl' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/synth/shared_pe.v:205]
+WARNING: [Synth 8-7071] port 'bus_struct_reset' of module 'shared_pe_rst_pl_0' is unconnected for instance 'rst_pl' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/synth/shared_pe.v:205]
+WARNING: [Synth 8-7071] port 'peripheral_reset' of module 'shared_pe_rst_pl_0' is unconnected for instance 'rst_pl' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/synth/shared_pe.v:205]
+WARNING: [Synth 8-7071] port 'interconnect_aresetn' of module 'shared_pe_rst_pl_0' is unconnected for instance 'rst_pl' [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/synth/shared_pe.v:205]
+WARNING: [Synth 8-7023] instance 'rst_pl' of module 'shared_pe_rst_pl_0' has 10 connections declared, but only 6 given [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/synth/shared_pe.v:205]
+INFO: [Synth 8-6155] done synthesizing module 'shared_pe' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/synth/shared_pe.v:12]
+INFO: [Synth 8-6155] done synthesizing module 'shared_pe_wrapper' (0#1) [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/hdl/shared_pe_wrapper.v:12]
+WARNING: [Synth 8-3848] Net aresetn_out in module/entity clk_map_imp_1A9JW5P does not have driver. [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/synth/bd_edd6.v:739]
+WARNING: [Synth 8-6014] Unused sequential element configuration_reg was removed. 
+WARNING: [Synth 8-3848] Net dp_audio_ref_clk in module/entity zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e does not have driver. [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:391]
+WARNING: [Synth 8-3848] Net irq_ipi_pl_0 in module/entity zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e does not have driver. [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:1411]
+WARNING: [Synth 8-3848] Net irq_ipi_pl_1 in module/entity zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e does not have driver. [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:1412]
+WARNING: [Synth 8-3848] Net irq_ipi_pl_2 in module/entity zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e does not have driver. [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:1413]
+WARNING: [Synth 8-3848] Net irq_ipi_pl_3 in module/entity zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e does not have driver. [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/hdl/zynq_ultra_ps_e_v3_4_1.v:1414]
+WARNING: [Synth 8-7129] Port prmry_aclk in module cdc_sync is either unconnected or has no load
+WARNING: [Synth 8-7129] Port prmry_resetn in module cdc_sync is either unconnected or has no load
+WARNING: [Synth 8-7129] Port prmry_vect_in[1] in module cdc_sync is either unconnected or has no load
+WARNING: [Synth 8-7129] Port prmry_vect_in[0] in module cdc_sync is either unconnected or has no load
+WARNING: [Synth 8-7129] Port scndry_resetn in module cdc_sync is either unconnected or has no load
+WARNING: [Synth 8-7129] Port dp_audio_ref_clk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port irq_ipi_pl_0 in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port irq_ipi_pl_1 in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port irq_ipi_pl_2 in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port irq_ipi_pl_3 in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihpc0_fpd_rclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihpc0_fpd_wclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihpc1_fpd_rclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihpc1_fpd_wclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihp0_fpd_rclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihp0_fpd_wclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihp1_fpd_rclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihp1_fpd_wclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihp2_fpd_rclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihp2_fpd_wclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihp3_fpd_rclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxihp3_fpd_wclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxi_lpd_rclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port saxi_lpd_wclk in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_awuser[15] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_awuser[14] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_awuser[13] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_awuser[12] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_awuser[11] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_awuser[10] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_awuser[9] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_awuser[8] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_awuser[7] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_awuser[6] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_aruser[15] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_aruser[14] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_aruser[13] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_aruser[12] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_aruser[11] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_aruser[10] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_aruser[9] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_aruser[8] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_aruser[7] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port sacefpd_aruser[6] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_clk[3] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_clk[2] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_clk[1] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_clk[0] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[31] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[30] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[29] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[28] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[27] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[26] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[25] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[24] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[23] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[22] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[21] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[20] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[19] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[18] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[17] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[16] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[15] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[14] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[13] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[12] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[11] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[10] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[9] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[8] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[7] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[6] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[5] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[4] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[3] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[2] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[1] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc_in[0] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[31] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[30] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[29] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[28] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[27] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[26] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[25] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[24] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[23] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[22] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[21] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[20] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[19] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[18] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[17] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[16] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[15] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[14] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[13] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+WARNING: [Synth 8-7129] Port test_adc2_in[12] in module zynq_ultra_ps_e_v3_4_1_zynq_ultra_ps_e is either unconnected or has no load
+INFO: [Common 17-14] Message 'Synth 8-7129' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:20 ; elapsed = 00:00:22 . Memory (MB): peak = 2166.746 ; gain = 545.402
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:20 ; elapsed = 00:00:22 . Memory (MB): peak = 2166.746 ; gain = 545.402
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:20 ; elapsed = 00:00:22 . Memory (MB): peak = 2166.746 ; gain = 545.402
+---------------------------------------------------------------------------------
+Netlist sorting complete. Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 2166.746 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 26 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/shared_pe_psu_0.xdc] for cell 'shared_pe_i/psu/inst'
+create_clock: Time (s): cpu = 00:00:07 ; elapsed = 00:00:07 . Memory (MB): peak = 2384.016 ; gain = 27.125
+Finished Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/shared_pe_psu_0.xdc] for cell 'shared_pe_i/psu/inst'
+Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_rst_pl_0/shared_pe_rst_pl_0_board.xdc] for cell 'shared_pe_i/rst_pl/U0'
+Finished Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_rst_pl_0/shared_pe_rst_pl_0_board.xdc] for cell 'shared_pe_i/rst_pl/U0'
+Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_rst_pl_0/shared_pe_rst_pl_0.xdc] for cell 'shared_pe_i/rst_pl/U0'
+Finished Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_rst_pl_0/shared_pe_rst_pl_0.xdc] for cell 'shared_pe_i/rst_pl/U0'
+Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_1/bd_edd6_psr_aclk_0_board.xdc] for cell 'shared_pe_i/ctrl/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_1/bd_edd6_psr_aclk_0_board.xdc] for cell 'shared_pe_i/ctrl/inst/clk_map/psr_aclk/U0'
+Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_1/bd_edd6_psr_aclk_0.xdc] for cell 'shared_pe_i/ctrl/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_1/bd_edd6_psr_aclk_0.xdc] for cell 'shared_pe_i/ctrl/inst/clk_map/psr_aclk/U0'
+Parsing XDC File [D:/fpga_build/shared_pe512_v2/shared_pe.runs/synth_1/dont_touch.xdc]
+Finished Parsing XDC File [D:/fpga_build/shared_pe512_v2/shared_pe.runs/synth_1/dont_touch.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [D:/fpga_build/shared_pe512_v2/shared_pe.runs/synth_1/dont_touch.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/shared_pe_wrapper_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/shared_pe_wrapper_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+INFO: [Project 1-1714] 14 XPM XDC files have been applied to the design.
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.005 . Memory (MB): peak = 2384.016 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 26 instances were transformed.
+  FDR => FDRE: 24 instances
+  SRL16 => SRL16E: 2 instances
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.139 . Memory (MB): peak = 2384.016 ; gain = 0.000
+INFO: [Synth 8-11241] undeclared symbol 'REGCCE', assumed default net type 'wire' [C:/Vivado/2022.2/data/verilog/src/unimacro/BRAM_SINGLE_MACRO.v:2170]
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:49 ; elapsed = 00:00:54 . Memory (MB): peak = 2384.016 ; gain = 762.672
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xczu7ev-ffvc1156-2-e
+INFO: [Synth 8-6742] Reading net delay rules and data
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:49 ; elapsed = 00:00:54 . Memory (MB): peak = 2384.016 ; gain = 762.672
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+Applied set_property DONT_TOUCH = true for shared_pe_i/psu/inst/PS8_i. (constraint file  d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/shared_pe_psu_0.xdc, line 25).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/psu/inst. (constraint file  D:/fpga_build/shared_pe512_v2/shared_pe.runs/synth_1/dont_touch.xdc, line 64).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/rst_pl/U0. (constraint file  D:/fpga_build/shared_pe512_v2/shared_pe.runs/synth_1/dont_touch.xdc, line 67).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/psu. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/rst_pl. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/pe. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_nodes/s00_ar_node/inst/m_sc_xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_nodes/s00_aw_node/inst/m_sc_xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_nodes/s00_b_node/inst/m_sc_xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_nodes/s00_r_node/inst/m_sc_xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_nodes/s00_w_node/inst/m_sc_xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_nodes/s00_ar_node/inst/s_sc_xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_nodes/s00_aw_node/inst/s_sc_xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_nodes/s00_b_node/inst/s_sc_xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_nodes/s00_r_node/inst/s_sc_xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_nodes/s00_w_node/inst/s_sc_xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/m00_exit_pipeline/m00_exit/inst/xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_entry_pipeline/s00_mmu/inst/xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_entry_pipeline/s00_si_converter/inst/xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+Applied set_property KEEP_HIERARCHY = SOFT for shared_pe_i/ctrl/inst/s00_entry_pipeline/s00_transaction_regulator/inst/xpm_cdc_async_rst_inst. (constraint file  auto generated constraint).
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:49 ; elapsed = 00:00:54 . Memory (MB): peak = 2384.016 ; gain = 762.672
+---------------------------------------------------------------------------------
+INFO: [Synth 8-802] inferred FSM for state register 'gen_axi.gen_write.write_cs_reg' in module 'sc_mmu_v1_0_11_decerr_slave'
+INFO: [Synth 8-802] inferred FSM for state register 'w_state_reg' in module 'sc_si_converter_v1_0_11_axilite_conv'
+INFO: [Synth 8-802] inferred FSM for state register 'r_state_reg' in module 'sc_si_converter_v1_0_11_axilite_conv'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+            P_WRITE_IDLE |                              001 |                               00
+            P_WRITE_DATA |                              010 |                               01
+            P_WRITE_RESP |                              100 |                               10
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'gen_axi.gen_write.write_cs_reg' using encoding 'one-hot' in module 'sc_mmu_v1_0_11_decerr_slave'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  W_IDLE |                              000 | 00000000000000000000000000000000
+                    W_RX |                              001 | 00000000000000000000000000000001
+                    W_TX |                              010 | 00000000000000000000000000000010
+              W_COMPLETE |                              011 | 00000000000000000000000000000100
+               W_RECOVER |                              100 | 00000000000000000000000000000011
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'w_state_reg' using encoding 'sequential' in module 'sc_si_converter_v1_0_11_axilite_conv'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                  R_IDLE |                               00 | 00000000000000000000000000000000
+               R_PENDING |                               01 | 00000000000000000000000000000001
+                    R_RX |                               10 | 00000000000000000000000000000010
+                    R_TX |                               11 | 00000000000000000000000000000011
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'r_state_reg' using encoding 'sequential' in module 'sc_si_converter_v1_0_11_axilite_conv'
+INFO: [Synth 8-6904] The RAM "shared_fifo32:/mem_reg" of size (depth=32 x width=32) is automatically implemented using LUTRAM. BRAM implementation would be inefficient 
+INFO: [Synth 8-5555] Implemented Block Ram Cascade chain of height 4 and width 18 for RAM "pe512_core:/weights_reg"
+INFO: [Synth 8-5555] Implemented Block Ram Cascade chain of height 2 and width 9 for RAM "pe512_core:/weights_reg"
+INFO: [Synth 8-7030] Implemented Non-Cascaded Block Ram (cascade_height = 1) of width 4 for RAM "pe512_core:/weights_reg"
+INFO: [Synth 8-7030] Implemented Non-Cascaded Block Ram (cascade_height = 1) of width 1 for RAM "pe512_core:/weights_reg"
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:54 ; elapsed = 00:00:59 . Memory (MB): peak = 2384.016 ; gain = 762.672
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input   32 Bit       Adders := 1     
+	   2 Input   13 Bit       Adders := 2     
+	   2 Input   12 Bit       Adders := 3     
+	   2 Input   11 Bit       Adders := 4     
+	   4 Input   11 Bit       Adders := 2     
+	   2 Input    9 Bit       Adders := 1     
+	   2 Input    8 Bit       Adders := 3     
+	   2 Input    7 Bit       Adders := 2     
+	   2 Input    6 Bit       Adders := 37    
+	   2 Input    5 Bit       Adders := 9     
+	   2 Input    4 Bit       Adders := 6     
+	   2 Input    2 Bit       Adders := 2     
+	   2 Input    1 Bit       Adders := 5     
+	   3 Input    1 Bit       Adders := 2     
++---XORs : 
+	   2 Input      1 Bit         XORs := 28    
++---Registers : 
+	             2178 Bit    Registers := 4     
+	              512 Bit    Registers := 1     
+	              179 Bit    Registers := 2     
+	              128 Bit    Registers := 2     
+	               70 Bit    Registers := 1     
+	               69 Bit    Registers := 1     
+	               64 Bit    Registers := 4     
+	               47 Bit    Registers := 1     
+	               40 Bit    Registers := 1     
+	               33 Bit    Registers := 1     
+	               32 Bit    Registers := 7     
+	               23 Bit    Registers := 1     
+	               16 Bit    Registers := 6     
+	               13 Bit    Registers := 3     
+	               12 Bit    Registers := 1     
+	               11 Bit    Registers := 5     
+	                9 Bit    Registers := 3     
+	                8 Bit    Registers := 4     
+	                7 Bit    Registers := 3     
+	                6 Bit    Registers := 37    
+	                5 Bit    Registers := 10    
+	                4 Bit    Registers := 11    
+	                3 Bit    Registers := 24    
+	                2 Bit    Registers := 13    
+	                1 Bit    Registers := 143   
++---RAMs : 
+	             256K Bit	(8192 X 32 bit)          RAMs := 1     
+	             1024 Bit	(32 X 32 bit)          RAMs := 2     
++---Muxes : 
+	   2 Input 2178 Bit        Muxes := 2     
+	   2 Input  128 Bit        Muxes := 4     
+	   4 Input  128 Bit        Muxes := 3     
+	   4 Input   40 Bit        Muxes := 1     
+	   2 Input   40 Bit        Muxes := 1     
+	   5 Input   32 Bit        Muxes := 1     
+	   2 Input   32 Bit        Muxes := 19    
+	   3 Input   32 Bit        Muxes := 1     
+	  12 Input   32 Bit        Muxes := 2     
+	   2 Input   16 Bit        Muxes := 2     
+	   3 Input   13 Bit        Muxes := 1     
+	   2 Input   13 Bit        Muxes := 1     
+	   2 Input   12 Bit        Muxes := 7     
+	   5 Input   12 Bit        Muxes := 1     
+	   5 Input   11 Bit        Muxes := 1     
+	   3 Input   11 Bit        Muxes := 1     
+	   2 Input   11 Bit        Muxes := 4     
+	   4 Input   11 Bit        Muxes := 1     
+	   2 Input    9 Bit        Muxes := 1     
+	   2 Input    8 Bit        Muxes := 3     
+	   4 Input    8 Bit        Muxes := 1     
+	   4 Input    7 Bit        Muxes := 3     
+	   2 Input    7 Bit        Muxes := 6     
+	   2 Input    6 Bit        Muxes := 6     
+	  12 Input    6 Bit        Muxes := 32    
+	   2 Input    5 Bit        Muxes := 2     
+	  12 Input    5 Bit        Muxes := 2     
+	   5 Input    4 Bit        Muxes := 3     
+	   2 Input    4 Bit        Muxes := 4     
+	   2 Input    3 Bit        Muxes := 10    
+	   4 Input    3 Bit        Muxes := 2     
+	   5 Input    3 Bit        Muxes := 1     
+	   6 Input    3 Bit        Muxes := 1     
+	   2 Input    2 Bit        Muxes := 19    
+	   4 Input    2 Bit        Muxes := 5     
+	   3 Input    2 Bit        Muxes := 2     
+	  16 Input    2 Bit        Muxes := 1     
+	   2 Input    1 Bit        Muxes := 133   
+	   3 Input    1 Bit        Muxes := 11    
+	   6 Input    1 Bit        Muxes := 9     
+	   4 Input    1 Bit        Muxes := 26    
+	  10 Input    1 Bit        Muxes := 6     
+	   7 Input    1 Bit        Muxes := 4     
+	   5 Input    1 Bit        Muxes := 22    
+	  12 Input    1 Bit        Muxes := 12    
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 1728 (col length:144)
+BRAMs: 624 (col length: RAMB18 144 RAMB36 72)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-7080] Parallel synthesis criteria is not met
+INFO: [Synth 8-6904] The RAM "shared_pe_i/pe/\inst/pe/pe /command_fifo/mem_reg" of size (depth=32 x width=32) is automatically implemented using LUTRAM. BRAM implementation would be inefficient 
+INFO: [Synth 8-6904] The RAM "shared_pe_i/pe/\inst/pe/pe /response_fifo/mem_reg" of size (depth=32 x width=32) is automatically implemented using LUTRAM. BRAM implementation would be inefficient 
+INFO: [Synth 8-5555] Implemented Block Ram Cascade chain of height 4 and width 18 for RAM "shared_pe_i/pe/inst/pe/pe/weights_reg"
+INFO: [Synth 8-5555] Implemented Block Ram Cascade chain of height 2 and width 9 for RAM "shared_pe_i/pe/inst/pe/pe/weights_reg"
+INFO: [Synth 8-7030] Implemented Non-Cascaded Block Ram (cascade_height = 1) of width 4 for RAM "shared_pe_i/pe/inst/pe/pe/weights_reg"
+INFO: [Synth 8-7030] Implemented Non-Cascaded Block Ram (cascade_height = 1) of width 1 for RAM "shared_pe_i/pe/inst/pe/pe/weights_reg"
+INFO: [Synth 8-3332] Sequential element (inst/clk_map/psr_aclk/U0/EXT_LPF/ACTIVE_LOW_EXT.ACT_LO_EXT/GENERATE_LEVEL_P_S_CDC.SINGLE_BIT.CROSS_PLEVEL_IN2SCNDRY_s_level_out_d5) is unused and will be removed from module shared_pe_ctrl_0.
+INFO: [Synth 8-3332] Sequential element (inst/clk_map/psr_aclk/U0/EXT_LPF/ACTIVE_LOW_EXT.ACT_LO_EXT/GENERATE_LEVEL_P_S_CDC.SINGLE_BIT.CROSS_PLEVEL_IN2SCNDRY_s_level_out_d6) is unused and will be removed from module shared_pe_ctrl_0.
+INFO: [Synth 8-3332] Sequential element (inst/clk_map/psr_aclk/U0/EXT_LPF/ACTIVE_LOW_AUX.ACT_LO_AUX/GENERATE_LEVEL_P_S_CDC.SINGLE_BIT.CROSS_PLEVEL_IN2SCNDRY_s_level_out_d5) is unused and will be removed from module shared_pe_ctrl_0.
+INFO: [Synth 8-3332] Sequential element (inst/clk_map/psr_aclk/U0/EXT_LPF/ACTIVE_LOW_AUX.ACT_LO_AUX/GENERATE_LEVEL_P_S_CDC.SINGLE_BIT.CROSS_PLEVEL_IN2SCNDRY_s_level_out_d6) is unused and will be removed from module shared_pe_ctrl_0.
+INFO: [Synth 8-3332] Sequential element (inst/clk_map/psr_aclk/U0/FDRE_inst) is unused and will be removed from module shared_pe_ctrl_0.
+INFO: [Synth 8-3332] Sequential element (inst/clk_map/psr_aclk/U0/BSR_OUT_DFF[0].FDRE_BSR) is unused and will be removed from module shared_pe_ctrl_0.
+INFO: [Synth 8-3332] Sequential element (inst/clk_map/psr_aclk/U0/PR_OUT_DFF[0].FDRE_PER) is unused and will be removed from module shared_pe_ctrl_0.
+INFO: [Synth 8-3332] Sequential element (inst/clk_map/psr_aclk/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N) is unused and will be removed from module shared_pe_ctrl_0.
+WARNING: [Synth 8-3332] Sequential element (EXT_LPF/ACTIVE_LOW_EXT.ACT_LO_EXT/GENERATE_LEVEL_P_S_CDC.SINGLE_BIT.CROSS_PLEVEL_IN2SCNDRY_s_level_out_d5) is unused and will be removed from module proc_sys_reset__parameterized1.
+WARNING: [Synth 8-3332] Sequential element (EXT_LPF/ACTIVE_LOW_EXT.ACT_LO_EXT/GENERATE_LEVEL_P_S_CDC.SINGLE_BIT.CROSS_PLEVEL_IN2SCNDRY_s_level_out_d6) is unused and will be removed from module proc_sys_reset__parameterized1.
+WARNING: [Synth 8-3332] Sequential element (EXT_LPF/ACTIVE_LOW_AUX.ACT_LO_AUX/GENERATE_LEVEL_P_S_CDC.SINGLE_BIT.CROSS_PLEVEL_IN2SCNDRY_s_level_out_d5) is unused and will be removed from module proc_sys_reset__parameterized1.
+WARNING: [Synth 8-3332] Sequential element (EXT_LPF/ACTIVE_LOW_AUX.ACT_LO_AUX/GENERATE_LEVEL_P_S_CDC.SINGLE_BIT.CROSS_PLEVEL_IN2SCNDRY_s_level_out_d6) is unused and will be removed from module proc_sys_reset__parameterized1.
+WARNING: [Synth 8-3332] Sequential element (FDRE_inst) is unused and will be removed from module proc_sys_reset__parameterized1.
+WARNING: [Synth 8-3332] Sequential element (BSR_OUT_DFF[0].FDRE_BSR) is unused and will be removed from module proc_sys_reset__parameterized1.
+WARNING: [Synth 8-3332] Sequential element (ACTIVE_LOW_BSR_OUT_DFF[0].FDRE_BSR_N) is unused and will be removed from module proc_sys_reset__parameterized1.
+WARNING: [Synth 8-3332] Sequential element (PR_OUT_DFF[0].FDRE_PER) is unused and will be removed from module proc_sys_reset__parameterized1.
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:01:15 ; elapsed = 00:01:20 . Memory (MB): peak = 2384.016 ; gain = 762.672
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Preliminary Mapping Report (see note below)
++---------------+------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|Module Name    | RTL Object             | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | Cascade Heights | 
++---------------+------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|shared_pe_i/pe | inst/pe/pe/weights_reg | 8 K x 32(READ_FIRST)   | W |   | 8 K x 32(WRITE_FIRST)  |   | R | Port A and B     | 1      | 7      | 4,2,1,1         | 
++---------------+------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+
+Note: The table above is a preliminary report that shows the Block RAMs at the current stage of the synthesis flow. Some Block RAMs may be reimplemented as non Block RAM primitives later in the synthesis flow. Multiple instantiated Block RAMs are reported only once. 
+
+Distributed RAM: Preliminary Mapping Report (see note below)
++---------------+----------------------------------+----------------+----------------------+------------------------------+
+|Module Name    | RTL Object                       | Inference      | Size (Depth x Width) | Primitives                   | 
++---------------+----------------------------------+----------------+----------------------+------------------------------+
+|shared_pe_i/pe | inst/pe/pe/command_fifo/mem_reg  | Implied        | 32 x 32              | RAM32M16 x 3                 | 
+|shared_pe_i/pe | inst/pe/pe/response_fifo/mem_reg | Implied        | 32 x 32              | RAM32M16 x 3                 | 
+|shared_pe_i/pe | inst/pe/l2/sums_reg              | User Attribute | 512 x 32             | RAM256X1D x 64 RAM64M8 x 40  | 
++---------------+----------------------------------+----------------+----------------------+------------------------------+
+
+Note: The table above is a preliminary report that shows the Distributed RAMs at the current stage of the synthesis flow. Some Distributed RAMs may be reimplemented as non Distributed RAM primitives later in the synthesis flow. Multiple instantiated RAMs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:01:39 ; elapsed = 00:01:47 . Memory (MB): peak = 3685.316 ; gain = 2063.973
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:01:41 ; elapsed = 00:01:50 . Memory (MB): peak = 3771.375 ; gain = 2150.031
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+
+Block RAM: Final Mapping Report
++---------------+------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|Module Name    | RTL Object             | PORT A (Depth x Width) | W | R | PORT B (Depth x Width) | W | R | Ports driving FF | RAMB18 | RAMB36 | Cascade Heights | 
++---------------+------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+|shared_pe_i/pe | inst/pe/pe/weights_reg | 8 K x 32(READ_FIRST)   | W |   | 8 K x 32(WRITE_FIRST)  |   | R | Port A and B     | 1      | 7      | 4,2,1,1         | 
++---------------+------------------------+------------------------+---+---+------------------------+---+---+------------------+--------+--------+-----------------+
+
+
+Distributed RAM: Final Mapping Report
++---------------+----------------------------------+----------------+----------------------+------------------------------+
+|Module Name    | RTL Object                       | Inference      | Size (Depth x Width) | Primitives                   | 
++---------------+----------------------------------+----------------+----------------------+------------------------------+
+|shared_pe_i/pe | inst/pe/pe/command_fifo/mem_reg  | Implied        | 32 x 32              | RAM32M16 x 3                 | 
+|shared_pe_i/pe | inst/pe/pe/response_fifo/mem_reg | Implied        | 32 x 32              | RAM32M16 x 3                 | 
+|shared_pe_i/pe | inst/pe/l2/sums_reg              | User Attribute | 512 x 32             | RAM256X1D x 64 RAM64M8 x 40  | 
++---------------+----------------------------------+----------------+----------------------+------------------------------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP, Shift Register and Retiming Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+INFO: [Synth 8-7052] The timing for the instance shared_pe_i/pe/inst/pe/pe/weights_reg_bram_3 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance shared_pe_i/pe/inst/pe/pe/weights_reg_bram_5 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance shared_pe_i/pe/inst/pe/pe/weights_reg_bram_6 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+INFO: [Synth 8-7052] The timing for the instance shared_pe_i/pe/inst/pe/pe/weights_reg_bram_7 (implemented as a Block RAM) might be sub-optimal as no optional output register could be merged into the ram block. Providing additional output register may help in improving timing.
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:01:44 ; elapsed = 00:01:53 . Memory (MB): peak = 3771.375 ; gain = 2150.031
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+WARNING: [Synth 8-3295] tying undriven pin trace_ctl_pipe[0]_inferred:in0 to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[31] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[30] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[29] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[28] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[27] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[26] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[25] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[24] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[23] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[22] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[21] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[20] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[19] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[18] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[17] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[16] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[15] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[14] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[13] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[12] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[11] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[10] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[9] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[8] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[7] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[6] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[5] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[4] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[3] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[2] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[1] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[0]_inferred:in0[0] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_ctl_pipe[7]_inferred:in0 to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_ctl_pipe[6]_inferred:in0 to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_ctl_pipe[5]_inferred:in0 to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_ctl_pipe[4]_inferred:in0 to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_ctl_pipe[3]_inferred:in0 to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_ctl_pipe[2]_inferred:in0 to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_ctl_pipe[1]_inferred:in0 to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[31] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[30] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[29] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[28] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[27] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[26] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[25] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[24] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[23] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[22] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[21] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[20] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[19] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[18] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[17] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[16] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[15] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[14] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[13] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[12] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[11] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[10] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[9] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[8] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[7] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[6] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[5] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[4] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[3] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[2] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[1] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[7]_inferred:in0[0] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[31] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[30] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[29] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[28] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[27] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[26] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[25] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[24] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[23] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[22] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[21] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[20] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[19] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[18] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[17] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[16] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[15] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[14] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[13] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[12] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[11] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[10] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[9] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[8] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[7] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[6] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[5] to constant 0
+WARNING: [Synth 8-3295] tying undriven pin trace_data_pipe[6]_inferred:in0[4] to constant 0
+INFO: [Common 17-14] Message 'Synth 8-3295' appears 100 times and further instances of the messages will be disabled. Use the Tcl command set_msg_config to change the current settings.
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:01:51 ; elapsed = 00:02:00 . Memory (MB): peak = 3779.965 ; gain = 2158.621
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:01:51 ; elapsed = 00:02:00 . Memory (MB): peak = 3779.965 ; gain = 2158.621
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:01:51 ; elapsed = 00:02:00 . Memory (MB): peak = 3779.965 ; gain = 2158.621
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:01:51 ; elapsed = 00:02:00 . Memory (MB): peak = 3779.965 ; gain = 2158.621
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:01:52 ; elapsed = 00:02:00 . Memory (MB): peak = 3779.965 ; gain = 2158.621
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:01:52 ; elapsed = 00:02:00 . Memory (MB): peak = 3779.965 ; gain = 2158.621
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+----------+------+
+|      |Cell      |Count |
++------+----------+------+
+|1     |BUFG_PS   |     1|
+|2     |CARRY8    |    18|
+|3     |LUT1      |   334|
+|4     |LUT2      |   249|
+|5     |LUT3      |   530|
+|6     |LUT4      |   299|
+|7     |LUT5      |   233|
+|8     |LUT6      |   917|
+|9     |MUXF7     |    61|
+|10    |PS8       |     1|
+|11    |RAM256X1D |    64|
+|12    |RAM32M    |     2|
+|13    |RAM32M16  |     4|
+|14    |RAM64M8   |    40|
+|15    |RAMB18E2  |     1|
+|16    |RAMB36E2  |     7|
+|22    |SRL16     |     2|
+|23    |FDCE      |    42|
+|24    |FDR       |    16|
+|25    |FDRE      |  1385|
+|26    |FDSE      |    17|
++------+----------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:01:52 ; elapsed = 00:02:00 . Memory (MB): peak = 3779.965 ; gain = 2158.621
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 16106 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:01:10 ; elapsed = 00:01:38 . Memory (MB): peak = 3779.965 ; gain = 1941.352
+Synthesis Optimization Complete : Time (s): cpu = 00:01:52 ; elapsed = 00:02:01 . Memory (MB): peak = 3779.965 ; gain = 2158.621
+INFO: [Project 1-571] Translating synthesized netlist
+Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.339 . Memory (MB): peak = 3788.027 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 207 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 3826.113 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 128 instances were transformed.
+  FDR => FDRE: 16 instances
+  RAM256X1D => RAM256X1D (MUXF7(x4), MUXF8(x2), RAMD64E(x8)): 64 instances
+  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 2 instances
+  RAM32M16 => RAM32M16 (RAMD32(x14), RAMS32(x2)): 4 instances
+  RAM64M8 => RAM64M8 (RAMD64E(x8)): 40 instances
+  SRL16 => SRL16E: 2 instances
+
+Synth Design complete, checksum: ffcefa3e
+INFO: [Common 17-83] Releasing license: Synthesis
+173 Infos, 393 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:02:07 ; elapsed = 00:02:24 . Memory (MB): peak = 3826.113 ; gain = 3334.785
+INFO: [Common 17-1381] The checkpoint 'D:/fpga_build/shared_pe512_v2/shared_pe.runs/synth_1/shared_pe_wrapper.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:02 ; elapsed = 00:00:06 . Memory (MB): peak = 3826.113 ; gain = 0.000
+INFO: [runtcl-4] Executing : report_utilization -file shared_pe_wrapper_utilization_synth.rpt -pb shared_pe_wrapper_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Mon Nov 23 13:38:26 2026...
+[Mon Nov 23 13:38:32 2026] synth_1 finished
+wait_on_runs: Time (s): cpu = 00:00:00 ; elapsed = 00:03:16 . Memory (MB): peak = 959.410 ; gain = 0.000
+# if {[get_property PROGRESS [get_runs synth_1]] ne "100%"} {error "Synthesis failed"}
+# set synth_log [open [file join $build shared_pe.runs synth_1 runme.log] r]
+# set synth_text [read $synth_log]
+# close $synth_log
+# if {[string first "CRITICAL WARNING" $synth_text]>=0} {error "Synthesis critical warning; fix before implementation"}
+# launch_runs impl_1 -to_step write_bitstream -jobs 2
+[Mon Nov 23 13:38:36 2026] Launched impl_1...
+Run output will be captured here: D:/fpga_build/shared_pe512_v2/shared_pe.runs/impl_1/runme.log
+# wait_on_run impl_1
+[Mon Nov 23 13:38:36 2026] Waiting for impl_1 to finish...
+
+*** Running vivado
+    with args -log shared_pe_wrapper.vdi -applog -m64 -product Vivado -messageDb vivado.pb -mode batch -source shared_pe_wrapper.tcl -notrace
+
+
+
+****** Vivado v2022.2 (64-bit)
+  **** SW Build 3671981 on Fri Oct 14 05:00:03 MDT 2022
+  **** IP Build 3669848 on Fri Oct 14 08:30:02 MDT 2022
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+
+source shared_pe_wrapper.tcl -notrace
+create_project: Time (s): cpu = 00:00:06 ; elapsed = 00:00:13 . Memory (MB): peak = 411.598 ; gain = 85.367
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1704] No user IP repositories specified
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository 'C:/Vivado/2022.2/data/ip'.
+add_files: Time (s): cpu = 00:00:04 ; elapsed = 00:00:08 . Memory (MB): peak = 493.234 ; gain = 76.414
+Command: link_design -top shared_pe_wrapper -part xczu7ev-ffvc1156-2-e
+Design is defaulting to srcset: sources_1
+Design is defaulting to constrset: constrs_1
+INFO: [Device 21-403] Loading part xczu7ev-ffvc1156-2-e
+Netlist sorting complete. Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.252 . Memory (MB): peak = 1619.844 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 189 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-479] Netlist was created with Vivado 2022.2
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/shared_pe_psu_0.xdc] for cell 'shared_pe_i/psu/inst'
+create_clock: Time (s): cpu = 00:00:05 ; elapsed = 00:00:06 . Memory (MB): peak = 1742.027 ; gain = 32.051
+Finished Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_psu_0/shared_pe_psu_0.xdc] for cell 'shared_pe_i/psu/inst'
+Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_rst_pl_0/shared_pe_rst_pl_0_board.xdc] for cell 'shared_pe_i/rst_pl/U0'
+Finished Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_rst_pl_0/shared_pe_rst_pl_0_board.xdc] for cell 'shared_pe_i/rst_pl/U0'
+Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_rst_pl_0/shared_pe_rst_pl_0.xdc] for cell 'shared_pe_i/rst_pl/U0'
+Finished Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_rst_pl_0/shared_pe_rst_pl_0.xdc] for cell 'shared_pe_i/rst_pl/U0'
+Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_1/bd_edd6_psr_aclk_0_board.xdc] for cell 'shared_pe_i/ctrl/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_1/bd_edd6_psr_aclk_0_board.xdc] for cell 'shared_pe_i/ctrl/inst/clk_map/psr_aclk/U0'
+Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_1/bd_edd6_psr_aclk_0.xdc] for cell 'shared_pe_i/ctrl/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [d:/fpga_build/shared_pe512_v2/shared_pe.gen/sources_1/bd/shared_pe/ip/shared_pe_ctrl_0/bd_0/ip/ip_1/bd_edd6_psr_aclk_0.xdc] for cell 'shared_pe_i/ctrl/inst/clk_map/psr_aclk/U0'
+INFO: [Project 1-1714] 14 XPM XDC files have been applied to the design.
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 1744.008 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 110 instances were transformed.
+  RAM256X1D => RAM256X1D (MUXF7(x4), MUXF8(x2), RAMD64E(x8)): 64 instances
+  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 2 instances
+  RAM32M16 => RAM32M16 (RAMD32(x14), RAMS32(x2)): 4 instances
+  RAM64M8 => RAM64M8 (RAMD64E(x8)): 40 instances
+
+11 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+link_design completed successfully
+link_design: Time (s): cpu = 00:00:20 ; elapsed = 00:00:35 . Memory (MB): peak = 1744.008 ; gain = 1250.773
+Command: opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu7ev'
+Running DRC as a precondition to command opt_design
+
+Starting DRC Task
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Project 1-461] DRC finished with 0 Errors
+INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:03 . Memory (MB): peak = 1774.918 ; gain = 30.910
+
+Starting Cache Timing Information Task
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Ending Cache Timing Information Task | Checksum: 1e930ab24
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:05 . Memory (MB): peak = 2060.723 ; gain = 285.805
+
+Starting Logic Optimization Task
+
+Phase 1 Retarget
+INFO: [Opt 31-138] Pushed 27 inverter(s) to 237 load pin(s).
+INFO: [Opt 31-49] Retargeted 0 cell(s).
+Phase 1 Retarget | Checksum: 1523cd52b
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.506 . Memory (MB): peak = 2406.492 ; gain = 0.000
+INFO: [Opt 31-389] Phase Retarget created 123 cells and removed 417 cells
+INFO: [Opt 31-1021] In phase Retarget, 15 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 2 Constant propagation
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Phase 2 Constant propagation | Checksum: 125843d63
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.561 . Memory (MB): peak = 2406.492 ; gain = 0.000
+INFO: [Opt 31-389] Phase Constant propagation created 21 cells and removed 44 cells
+INFO: [Opt 31-1021] In phase Constant propagation, 20 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 3 Sweep
+Phase 3 Sweep | Checksum: 119de3ff5
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.739 . Memory (MB): peak = 2406.492 ; gain = 0.000
+INFO: [Opt 31-389] Phase Sweep created 0 cells and removed 33 cells
+INFO: [Opt 31-1021] In phase Sweep, 26 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 4 BUFG optimization
+INFO: [Opt 31-1077] Phase BUFG optimization inserted 0 global clock buffer(s) for CLOCK_LOW_FANOUT.
+Phase 4 BUFG optimization | Checksum: 119de3ff5
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.895 . Memory (MB): peak = 2406.492 ; gain = 0.000
+INFO: [Opt 31-662] Phase BUFG optimization created 0 cells of which 0 are BUFGs and removed 0 cells.
+
+Phase 5 Shift Register Optimization
+INFO: [Opt 31-1064] SRL Remap converted 0 SRLs to 0 registers and converted 0 registers of register chains to 0 SRLs
+Phase 5 Shift Register Optimization | Checksum: 119de3ff5
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.906 . Memory (MB): peak = 2406.492 ; gain = 0.000
+INFO: [Opt 31-389] Phase Shift Register Optimization created 0 cells and removed 0 cells
+
+Phase 6 Post Processing Netlist
+Phase 6 Post Processing Netlist | Checksum: 119de3ff5
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.924 . Memory (MB): peak = 2406.492 ; gain = 0.000
+INFO: [Opt 31-389] Phase Post Processing Netlist created 0 cells and removed 0 cells
+INFO: [Opt 31-1021] In phase Post Processing Netlist, 15 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+Opt_design Change Summary
+=========================
+
+
+-------------------------------------------------------------------------------------------------------------------------
+|  Phase                        |  #Cells created  |  #Cells Removed  |  #Constrained objects preventing optimizations  |
+-------------------------------------------------------------------------------------------------------------------------
+|  Retarget                     |             123  |             417  |                                             15  |
+|  Constant propagation         |              21  |              44  |                                             20  |
+|  Sweep                        |               0  |              33  |                                             26  |
+|  BUFG optimization            |               0  |               0  |                                              0  |
+|  Shift Register Optimization  |               0  |               0  |                                              0  |
+|  Post Processing Netlist      |               0  |               0  |                                             15  |
+-------------------------------------------------------------------------------------------------------------------------
+
+
+
+Starting Connectivity Check Task
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.013 . Memory (MB): peak = 2406.492 ; gain = 0.000
+Ending Logic Optimization Task | Checksum: 1228ad2c9
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 2406.492 ; gain = 0.000
+
+Starting Power Optimization Task
+INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
+INFO: [Pwropt 34-9] Applying IDT optimizations ...
+INFO: [Pwropt 34-10] Applying ODC optimizations ...
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+
+
+Starting PowerOpt Patch Enables Task
+INFO: [Pwropt 34-162] WRITE_MODE attribute of 0 BRAM(s) out of a total of 8 has been updated to save power. Run report_power_opt to get a complete listing of the BRAMs updated.
+INFO: [Pwropt 34-201] Structural ODC has moved 0 WE to EN ports
+Number of BRAM Ports augmented: 0 newly gated: 0 Total Ports: 16
+Ending PowerOpt Patch Enables Task | Checksum: 1228ad2c9
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.084 . Memory (MB): peak = 3037.246 ; gain = 0.000
+Ending Power Optimization Task | Checksum: 1228ad2c9
+
+Time (s): cpu = 00:00:21 ; elapsed = 00:00:21 . Memory (MB): peak = 3037.246 ; gain = 630.754
+
+Starting Final Cleanup Task
+Ending Final Cleanup Task | Checksum: 1228ad2c9
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 3037.246 ; gain = 0.000
+
+Starting Netlist Obfuscation Task
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 3037.246 ; gain = 0.000
+Ending Netlist Obfuscation Task | Checksum: 1228ad2c9
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 3037.246 ; gain = 0.000
+INFO: [Common 17-83] Releasing license: Implementation
+38 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+opt_design completed successfully
+opt_design: Time (s): cpu = 00:00:34 ; elapsed = 00:00:33 . Memory (MB): peak = 3037.246 ; gain = 1293.238
+INFO: [Timing 38-480] Writing timing data to binary archive.
+INFO: [Common 17-1381] The checkpoint 'D:/fpga_build/shared_pe512_v2/shared_pe.runs/impl_1/shared_pe_wrapper_opt.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:02 ; elapsed = 00:00:07 . Memory (MB): peak = 3037.246 ; gain = 0.000
+INFO: [runtcl-4] Executing : report_drc -file shared_pe_wrapper_drc_opted.rpt -pb shared_pe_wrapper_drc_opted.pb -rpx shared_pe_wrapper_drc_opted.rpx
+Command: report_drc -file shared_pe_wrapper_drc_opted.rpt -pb shared_pe_wrapper_drc_opted.pb -rpx shared_pe_wrapper_drc_opted.rpx
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file D:/fpga_build/shared_pe512_v2/shared_pe.runs/impl_1/shared_pe_wrapper_drc_opted.rpt.
+report_drc completed successfully
+Command: place_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+Running DRC as a precondition to command place_design
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+Starting Placer Task
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 2 CPUs
+
+Phase 1 Placer Initialization
+
+Phase 1.1 Placer Initialization Netlist Sorting
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 3037.246 ; gain = 0.000
+Phase 1.1 Placer Initialization Netlist Sorting | Checksum: 59ed17f8
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.023 . Memory (MB): peak = 3037.246 ; gain = 0.000
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.003 . Memory (MB): peak = 3037.246 ; gain = 0.000
+
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device | Checksum: 6debfe59
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:35 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 1.3 Build Placer Netlist Model
+Phase 1.3 Build Placer Netlist Model | Checksum: 1338de0bf
+
+Time (s): cpu = 00:00:36 ; elapsed = 00:00:39 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 1.4 Constrain Clocks/Macros
+Phase 1.4 Constrain Clocks/Macros | Checksum: 1338de0bf
+
+Time (s): cpu = 00:00:36 ; elapsed = 00:00:39 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Phase 1 Placer Initialization | Checksum: 1338de0bf
+
+Time (s): cpu = 00:00:36 ; elapsed = 00:00:39 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 2 Global Placement
+
+Phase 2.1 Floorplanning
+
+Phase 2.1.1 Partition Driven Placement
+
+Phase 2.1.1.1 PBP: Partition Driven Placement
+Phase 2.1.1.1 PBP: Partition Driven Placement | Checksum: 10ca7a55a
+
+Time (s): cpu = 00:00:41 ; elapsed = 00:00:42 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 2.1.1.2 PBP: Clock Region Placement
+Phase 2.1.1.2 PBP: Clock Region Placement | Checksum: af6cc07f
+
+Time (s): cpu = 00:00:42 ; elapsed = 00:00:43 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 2.1.1.3 PBP: Compute Congestion
+Phase 2.1.1.3 PBP: Compute Congestion | Checksum: af6cc07f
+
+Time (s): cpu = 00:00:42 ; elapsed = 00:00:43 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 2.1.1.4 PBP: UpdateTiming
+Phase 2.1.1.4 PBP: UpdateTiming | Checksum: 13734ac7a
+
+Time (s): cpu = 00:00:43 ; elapsed = 00:00:44 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 2.1.1.5 PBP: Add part constraints
+Phase 2.1.1.5 PBP: Add part constraints | Checksum: 13734ac7a
+
+Time (s): cpu = 00:00:43 ; elapsed = 00:00:44 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Phase 2.1.1 Partition Driven Placement | Checksum: 13734ac7a
+
+Time (s): cpu = 00:00:43 ; elapsed = 00:00:44 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Phase 2.1 Floorplanning | Checksum: a89ae2be
+
+Time (s): cpu = 00:00:43 ; elapsed = 00:00:44 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 2.2 Update Timing before SLR Path Opt
+Phase 2.2 Update Timing before SLR Path Opt | Checksum: a89ae2be
+
+Time (s): cpu = 00:00:43 ; elapsed = 00:00:44 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 2.3 Post-Processing in Floorplanning
+Phase 2.3 Post-Processing in Floorplanning | Checksum: a89ae2be
+
+Time (s): cpu = 00:00:43 ; elapsed = 00:00:44 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 2.4 Global Placement Core
+
+Phase 2.4.1 UpdateTiming Before Physical Synthesis
+Phase 2.4.1 UpdateTiming Before Physical Synthesis | Checksum: ee761b9c
+
+Time (s): cpu = 00:01:04 ; elapsed = 00:00:58 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 2.4.2 Physical Synthesis In Placer
+INFO: [Physopt 32-1035] Found 0 LUTNM shape to break, 189 LUT instances to create LUTNM shape
+INFO: [Physopt 32-1044] Break lutnm for timing: one critical 0, two critical 0, total 0, new lutff created 0
+INFO: [Physopt 32-1138] End 1 Pass. Optimized 78 nets or LUTs. Breaked 0 LUT, combined 78 existing LUTs and moved 0 existing LUT
+INFO: [Physopt 32-1030] Pass 1. Identified 7 candidate driver sets for equivalent driver rewiring.
+INFO: [Physopt 32-661] Optimized 2 nets.  Re-placed 4 instances.
+INFO: [Physopt 32-775] End 1 Pass. Optimized 2 nets or cells. Created 0 new cell, deleted 0 existing cell and moved 4 existing cells
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.016 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Physopt 32-65] No nets found for high-fanout optimization.
+INFO: [Physopt 32-232] Optimized 0 net. Created 0 new instance.
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-670] No setup violation found.  DSP Register Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  Shift Register to Pipeline Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  Shift Register Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  BRAM Register Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  URAM Register Optimization was not performed.
+INFO: [Physopt 32-949] No candidate nets found for dynamic/static region interface net replication
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Summary of Physical Synthesis Optimizations
+============================================
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  Optimization                                     |  Added Cells  |  Removed Cells  |  Optimized Cells/Nets  |  Dont Touch  |  Iterations  |  Elapsed   |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  LUT Combining                                    |            0  |             78  |                    78  |           0  |           1  |  00:00:00  |
+|  Retime                                           |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Equivalent Driver Rewiring                       |            0  |              0  |                     2  |           0  |           1  |  00:00:00  |
+|  Very High Fanout                                 |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  DSP Register                                     |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  Shift Register to Pipeline                       |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  Shift Register                                   |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  BRAM Register                                    |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  URAM Register                                    |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  Dynamic/Static Region Interface Net Replication  |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Total                                            |            0  |             78  |                    80  |           0  |           5  |  00:00:01  |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Phase 2.4.2 Physical Synthesis In Placer | Checksum: 1cbebec9f
+
+Time (s): cpu = 00:01:05 ; elapsed = 00:00:59 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Phase 2.4 Global Placement Core | Checksum: 10239336f
+
+Time (s): cpu = 00:01:07 ; elapsed = 00:01:01 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Phase 2 Global Placement | Checksum: 10239336f
+
+Time (s): cpu = 00:01:07 ; elapsed = 00:01:01 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 3 Detail Placement
+
+Phase 3.1 Commit Multi Column Macros
+Phase 3.1 Commit Multi Column Macros | Checksum: 18703cc57
+
+Time (s): cpu = 00:01:08 ; elapsed = 00:01:02 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 3.2 Commit Most Macros & LUTRAMs
+Phase 3.2 Commit Most Macros & LUTRAMs | Checksum: 1f9bb73c0
+
+Time (s): cpu = 00:01:10 ; elapsed = 00:01:03 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 3.3 Small Shape DP
+
+Phase 3.3.1 Small Shape Clustering
+Phase 3.3.1 Small Shape Clustering | Checksum: 1abe2813c
+
+Time (s): cpu = 00:01:12 ; elapsed = 00:01:04 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 3.3.2 Flow Legalize Slice Clusters
+Phase 3.3.2 Flow Legalize Slice Clusters | Checksum: 15fe825f6
+
+Time (s): cpu = 00:01:12 ; elapsed = 00:01:05 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 3.3.3 Slice Area Swap
+
+Phase 3.3.3.1 Slice Area Swap Initial
+Phase 3.3.3.1 Slice Area Swap Initial | Checksum: 181ab53b0
+
+Time (s): cpu = 00:01:13 ; elapsed = 00:01:06 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Phase 3.3.3 Slice Area Swap | Checksum: 181ab53b0
+
+Time (s): cpu = 00:01:13 ; elapsed = 00:01:06 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Phase 3.3 Small Shape DP | Checksum: 15249da27
+
+Time (s): cpu = 00:01:15 ; elapsed = 00:01:08 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 3.4 Re-assign LUT pins
+Phase 3.4 Re-assign LUT pins | Checksum: 1b98a4d45
+
+Time (s): cpu = 00:01:16 ; elapsed = 00:01:08 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 3.5 Pipeline Register Optimization
+Phase 3.5 Pipeline Register Optimization | Checksum: 203bf71ff
+
+Time (s): cpu = 00:01:16 ; elapsed = 00:01:08 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Phase 3 Detail Placement | Checksum: 203bf71ff
+
+Time (s): cpu = 00:01:16 ; elapsed = 00:01:08 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 4 Post Placement Optimization and Clean-Up
+
+Phase 4.1 Post Commit Optimization
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 4.1.1 Post Placement Optimization
+Post Placement Optimization Initialization | Checksum: 1981f143f
+
+Phase 4.1.1.1 BUFG Insertion
+
+Starting Physical Synthesis Task
+
+Phase 1 Physical Synthesis Initialization
+INFO: [Physopt 32-721] Multithreading enabled for phys_opt_design using a maximum of 2 CPUs
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=4.968 | TNS=0.000 |
+Phase 1 Physical Synthesis Initialization | Checksum: 10a4813bc
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.227 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Place 46-56] BUFG insertion identified 0 candidate nets. Inserted BUFG: 0, Replicated BUFG Driver: 0, Skipped due to Placement/Routing Conflicts: 0, Skipped due to Timing Degradation: 0, Skipped due to Illegal Netlist: 0.
+Ending Physical Synthesis Task | Checksum: 13f39650f
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.278 . Memory (MB): peak = 3895.438 ; gain = 0.000
+Phase 4.1.1.1 BUFG Insertion | Checksum: 1981f143f
+
+Time (s): cpu = 00:01:21 ; elapsed = 00:01:13 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 4.1.1.2 Post Placement Timing Optimization
+INFO: [Place 30-746] Post Placement Timing Summary WNS=4.968. For the most accurate timing information please run report_timing.
+Phase 4.1.1.2 Post Placement Timing Optimization | Checksum: 18ac17f37
+
+Time (s): cpu = 00:01:22 ; elapsed = 00:01:13 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Time (s): cpu = 00:01:22 ; elapsed = 00:01:13 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Phase 4.1 Post Commit Optimization | Checksum: 18ac17f37
+
+Time (s): cpu = 00:01:22 ; elapsed = 00:01:13 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 4.2 Post Placement Cleanup
+Phase 4.2 Post Placement Cleanup | Checksum: 25d877306
+
+Time (s): cpu = 00:01:29 ; elapsed = 00:01:21 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 4.3 Placer Reporting
+
+Phase 4.3.1 Print Estimated Congestion
+INFO: [Place 30-612] Post-Placement Estimated Congestion 
+ ________________________________________________________________________
+|           | Global Congestion | Long Congestion   | Short Congestion  |
+| Direction | Region Size       | Region Size       | Region Size       |
+|___________|___________________|___________________|___________________|
+|      North|                1x1|                1x1|                2x2|
+|___________|___________________|___________________|___________________|
+|      South|                8x8|              16x16|                2x2|
+|___________|___________________|___________________|___________________|
+|       East|                1x1|                1x1|                4x4|
+|___________|___________________|___________________|___________________|
+|       West|                1x1|              16x16|                4x4|
+|___________|___________________|___________________|___________________|
+
+Phase 4.3.1 Print Estimated Congestion | Checksum: 25d877306
+
+Time (s): cpu = 00:01:29 ; elapsed = 00:01:21 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Phase 4.3 Placer Reporting | Checksum: 25d877306
+
+Time (s): cpu = 00:01:29 ; elapsed = 00:01:21 . Memory (MB): peak = 3895.438 ; gain = 858.191
+
+Phase 4.4 Final Placement Cleanup
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.001 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Time (s): cpu = 00:01:29 ; elapsed = 00:01:21 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Phase 4 Post Placement Optimization and Clean-Up | Checksum: 28c2664d8
+
+Time (s): cpu = 00:01:29 ; elapsed = 00:01:21 . Memory (MB): peak = 3895.438 ; gain = 858.191
+Ending Placer Task | Checksum: 1f08d7df6
+
+Time (s): cpu = 00:01:29 ; elapsed = 00:01:21 . Memory (MB): peak = 3895.438 ; gain = 858.191
+INFO: [Common 17-83] Releasing license: Implementation
+76 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+place_design completed successfully
+place_design: Time (s): cpu = 00:01:34 ; elapsed = 00:01:24 . Memory (MB): peak = 3895.438 ; gain = 858.191
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:03 ; elapsed = 00:00:00.845 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'D:/fpga_build/shared_pe512_v2/shared_pe.runs/impl_1/shared_pe_wrapper_placed.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:04 ; elapsed = 00:00:07 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [runtcl-4] Executing : report_io -file shared_pe_wrapper_io_placed.rpt
+report_io: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.184 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [runtcl-4] Executing : report_utilization -file shared_pe_wrapper_utilization_placed.rpt -pb shared_pe_wrapper_utilization_placed.pb
+INFO: [runtcl-4] Executing : report_control_sets -verbose -file shared_pe_wrapper_control_sets_placed.rpt
+report_control_sets: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.039 . Memory (MB): peak = 3895.438 ; gain = 0.000
+Command: phys_opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu7ev'
+
+Starting Initial Update Timing Task
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Vivado_Tcl 4-383] Design worst setup slack (WNS) is greater than or equal to 0.000 ns. Skipping all physical synthesis optimizations.
+INFO: [Vivado_Tcl 4-232] No setup violation found. The netlist was not modified.
+INFO: [Common 17-83] Releasing license: Implementation
+85 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+phys_opt_design completed successfully
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:03 ; elapsed = 00:00:00.950 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'D:/fpga_build/shared_pe512_v2/shared_pe.runs/impl_1/shared_pe_wrapper_physopt.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:04 ; elapsed = 00:00:06 . Memory (MB): peak = 3895.438 ; gain = 0.000
+Command: route_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu7ev'
+Running DRC as a precondition to command route_design
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+
+
+Starting Routing Task
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 2 CPUs
+
+Phase 1 Build RT Design
+Checksum: PlaceDB: dde7cd3d ConstDB: 0 ShapeSum: 3fdfbcea RouteDB: d2c5f3cf
+Nodegraph reading from file.  Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 3895.438 ; gain = 0.000
+Post Restoration Checksum: NetGraph: 34e45570 NumContArr: f6f9c9ec Constraints: 3ccb2f9d Timing: 0
+Phase 1 Build RT Design | Checksum: 168a94ef9
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:09 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 2 Router Initialization
+
+Phase 2.1 Fix Topology Constraints
+Phase 2.1 Fix Topology Constraints | Checksum: 168a94ef9
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:09 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 2.2 Pre Route Cleanup
+Phase 2.2 Pre Route Cleanup | Checksum: 168a94ef9
+
+Time (s): cpu = 00:00:10 ; elapsed = 00:00:09 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Route 35-445] Local routing congestion detected. At least 64 CLBs have high pin utilization, which can impact runtime and timing closure. Top ten contiguous CLBs with high pin utilization are:
+	[CLEM_X34Y133 -> CLEM_X34Y120]
+	[CLEM_X31Y133 -> CLEM_X31Y122]
+	[CLEM_X29Y125 -> CLEM_X29Y124]
+
+Phase 2.3 Global Clock Net Routing
+ Number of Nodes with overlaps = 0
+Phase 2.3 Global Clock Net Routing | Checksum: 1e34c5668
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:10 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 2.4 Update Timing
+Phase 2.4 Update Timing | Checksum: 120f8361f
+
+Time (s): cpu = 00:00:13 ; elapsed = 00:00:11 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=5.165  | TNS=0.000  | WHS=-0.021 | THS=-2.316 |
+
+INFO: [Route 35-445] Local routing congestion detected. At least 64 CLBs have high pin utilization, which can impact runtime and timing closure. Top ten contiguous CLBs with high pin utilization are:
+	[CLEM_X34Y133 -> CLEM_X34Y120]
+	[CLEM_X31Y133 -> CLEM_X31Y122]
+	[CLEM_X29Y125 -> CLEM_X29Y124]
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 0 %
+  Global Horizontal Routing Utilization  = 0 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 3726
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 2780
+  Number of Partially Routed Nets     = 946
+  Number of Node Overlaps             = 0
+
+Phase 2 Router Initialization | Checksum: 1c98b1186
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:13 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 3 Initial Routing
+
+Phase 3.1 Global Routing
+Phase 3.1 Global Routing | Checksum: 1c98b1186
+
+Time (s): cpu = 00:00:17 ; elapsed = 00:00:13 . Memory (MB): peak = 3895.438 ; gain = 0.000
+Phase 3 Initial Routing | Checksum: 1496b626e
+
+Time (s): cpu = 00:00:20 ; elapsed = 00:00:15 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 4 Rip-up And Reroute
+
+Phase 4.1 Global Iteration 0
+ Number of Nodes with overlaps = 959
+ Number of Nodes with overlaps = 31
+ Number of Nodes with overlaps = 0
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=4.425  | TNS=0.000  | WHS=-0.009 | THS=-0.009 |
+
+Phase 4.1 Global Iteration 0 | Checksum: 2898e23c7
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:21 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 4.2 Additional Iteration for Hold
+Phase 4.2 Additional Iteration for Hold | Checksum: 280e810c0
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:21 . Memory (MB): peak = 3895.438 ; gain = 0.000
+Phase 4 Rip-up And Reroute | Checksum: 280e810c0
+
+Time (s): cpu = 00:00:30 ; elapsed = 00:00:21 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 5 Delay and Skew Optimization
+
+Phase 5.1 Delay CleanUp
+
+Phase 5.1.1 Update Timing
+Phase 5.1.1 Update Timing | Checksum: 2437214ef
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:22 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=4.425  | TNS=0.000  | WHS=0.023  | THS=0.000  |
+
+
+Phase 5.1.2 Update Timing
+Phase 5.1.2 Update Timing | Checksum: 278fee54f
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:23 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=4.425  | TNS=0.000  | WHS=0.023  | THS=0.000  |
+
+Phase 5.1 Delay CleanUp | Checksum: 278fee54f
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:23 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 5.2 Clock Skew Optimization
+Phase 5.2 Clock Skew Optimization | Checksum: 278fee54f
+
+Time (s): cpu = 00:00:32 ; elapsed = 00:00:23 . Memory (MB): peak = 3895.438 ; gain = 0.000
+Phase 5 Delay and Skew Optimization | Checksum: 278fee54f
+
+Time (s): cpu = 00:00:33 ; elapsed = 00:00:23 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 6 Post Hold Fix
+
+Phase 6.1 Hold Fix Iter
+
+Phase 6.1.1 Update Timing
+Phase 6.1.1 Update Timing | Checksum: 1fabfa175
+
+Time (s): cpu = 00:00:33 ; elapsed = 00:00:23 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=4.425  | TNS=0.000  | WHS=0.023  | THS=0.000  |
+
+Phase 6.1 Hold Fix Iter | Checksum: 220eaaa87
+
+Time (s): cpu = 00:00:33 ; elapsed = 00:00:23 . Memory (MB): peak = 3895.438 ; gain = 0.000
+Phase 6 Post Hold Fix | Checksum: 220eaaa87
+
+Time (s): cpu = 00:00:33 ; elapsed = 00:00:23 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 7 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 0.803514 %
+  Global Horizontal Routing Utilization  = 0.346029 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Phase 7 Route finalize | Checksum: 216b8eabd
+
+Time (s): cpu = 00:00:34 ; elapsed = 00:00:24 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 8 Verifying routed nets
+
+ Verification completed successfully
+Phase 8 Verifying routed nets | Checksum: 216b8eabd
+
+Time (s): cpu = 00:00:34 ; elapsed = 00:00:24 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 9 Depositing Routes
+Phase 9 Depositing Routes | Checksum: 216b8eabd
+
+Time (s): cpu = 00:00:35 ; elapsed = 00:00:24 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 10 Resolve XTalk
+Phase 10 Resolve XTalk | Checksum: 216b8eabd
+
+Time (s): cpu = 00:00:35 ; elapsed = 00:00:25 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Phase 11 Post Router Timing
+INFO: [Route 35-57] Estimated Timing Summary | WNS=4.425  | TNS=0.000  | WHS=0.023  | THS=0.000  |
+
+INFO: [Route 35-327] The final timing numbers are based on the router estimated timing analysis. For a complete and accurate timing signoff, please run report_timing_summary.
+Phase 11 Post Router Timing | Checksum: 216b8eabd
+
+Time (s): cpu = 00:00:35 ; elapsed = 00:00:25 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Route 35-16] Router Completed Successfully
+
+Time (s): cpu = 00:00:35 ; elapsed = 00:00:25 . Memory (MB): peak = 3895.438 ; gain = 0.000
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Implementation
+103 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:00:41 ; elapsed = 00:00:28 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Write XDEF Complete: Time (s): cpu = 00:00:03 ; elapsed = 00:00:00.916 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [Common 17-1381] The checkpoint 'D:/fpga_build/shared_pe512_v2/shared_pe.runs/impl_1/shared_pe_wrapper_routed.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:04 ; elapsed = 00:00:06 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [runtcl-4] Executing : report_drc -file shared_pe_wrapper_drc_routed.rpt -pb shared_pe_wrapper_drc_routed.pb -rpx shared_pe_wrapper_drc_routed.rpx
+Command: report_drc -file shared_pe_wrapper_drc_routed.rpt -pb shared_pe_wrapper_drc_routed.pb -rpx shared_pe_wrapper_drc_routed.rpx
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file D:/fpga_build/shared_pe512_v2/shared_pe.runs/impl_1/shared_pe_wrapper_drc_routed.rpt.
+report_drc completed successfully
+INFO: [runtcl-4] Executing : report_methodology -file shared_pe_wrapper_methodology_drc_routed.rpt -pb shared_pe_wrapper_methodology_drc_routed.pb -rpx shared_pe_wrapper_methodology_drc_routed.rpx
+Command: report_methodology -file shared_pe_wrapper_methodology_drc_routed.rpt -pb shared_pe_wrapper_methodology_drc_routed.pb -rpx shared_pe_wrapper_methodology_drc_routed.rpx
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [DRC 23-133] Running Methodology with 2 threads
+INFO: [Vivado_Tcl 2-1520] The results of Report Methodology are in file D:/fpga_build/shared_pe512_v2/shared_pe.runs/impl_1/shared_pe_wrapper_methodology_drc_routed.rpt.
+report_methodology completed successfully
+report_methodology: Time (s): cpu = 00:00:12 ; elapsed = 00:00:07 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [runtcl-4] Executing : report_power -file shared_pe_wrapper_power_routed.rpt -pb shared_pe_wrapper_power_summary_routed.pb -rpx shared_pe_wrapper_power_routed.rpx
+Command: report_power -file shared_pe_wrapper_power_routed.rpt -pb shared_pe_wrapper_power_summary_routed.pb -rpx shared_pe_wrapper_power_routed.rpx
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+115 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+report_power completed successfully
+report_power: Time (s): cpu = 00:00:14 ; elapsed = 00:00:13 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [runtcl-4] Executing : report_route_status -file shared_pe_wrapper_route_status.rpt -pb shared_pe_wrapper_route_status.pb
+INFO: [runtcl-4] Executing : report_timing_summary -max_paths 10 -report_unconstrained -file shared_pe_wrapper_timing_summary_routed.rpt -pb shared_pe_wrapper_timing_summary_routed.pb -rpx shared_pe_wrapper_timing_summary_routed.rpx -warn_on_violation 
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: E, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+INFO: [runtcl-4] Executing : report_incremental_reuse -file shared_pe_wrapper_incremental_reuse_routed.rpt
+INFO: [Vivado_Tcl 4-1062] Incremental flow is disabled. No incremental reuse Info to report.
+INFO: [runtcl-4] Executing : report_clock_utilization -file shared_pe_wrapper_clock_utilization_routed.rpt
+report_clock_utilization: Time (s): cpu = 00:00:05 ; elapsed = 00:00:05 . Memory (MB): peak = 3895.438 ; gain = 0.000
+INFO: [runtcl-4] Executing : report_bus_skew -warn_on_violation -file shared_pe_wrapper_bus_skew_routed.rpt -pb shared_pe_wrapper_bus_skew_routed.pb -rpx shared_pe_wrapper_bus_skew_routed.rpx
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: E, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+Command: write_bitstream -force shared_pe_wrapper.bit
+Attempting to get a license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu7ev'
+Running DRC as a precondition to command write_bitstream
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado 12-3199] DRC finished with 0 Errors
+INFO: [Vivado 12-3200] Please refer to the DRC report (report_drc) for more information.
+INFO: [Designutils 20-2272] Running write_bitstream with 2 threads.
+Loading data files...
+Loading site data...
+Loading route data...
+Processing options...
+Creating bitmap...
+Creating bitstream...
+Writing bitstream ./shared_pe_wrapper.bit...
+INFO: [Vivado 12-1842] Bitgen Completed Successfully.
+INFO: [Project 1-1876] WebTalk data collection is mandatory when using a ULT device. To see the specific WebTalk data collected for your design, open the usage_statistics_webtalk.html or usage_statistics_webtalk.xml file in the implementation directory.
+INFO: [Common 17-83] Releasing license: Implementation
+12 Infos, 0 Warnings, 0 Critical Warnings and 0 Errors encountered.
+write_bitstream completed successfully
+write_bitstream: Time (s): cpu = 00:00:48 ; elapsed = 00:00:44 . Memory (MB): peak = 4023.344 ; gain = 127.906
+INFO: [Common 17-206] Exiting Vivado at Mon Nov 23 13:44:08 2026...
+[Mon Nov 23 13:44:13 2026] impl_1 finished
+wait_on_runs: Time (s): cpu = 00:00:00 ; elapsed = 00:05:37 . Memory (MB): peak = 959.410 ; gain = 0.000
+# if {[get_property PROGRESS [get_runs impl_1]] ne "100%"} {error "Implementation failed"}
+# open_run impl_1
+INFO: [Device 21-403] Loading part xczu7ev-ffvc1156-2-e
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.247 . Memory (MB): peak = 1967.215 ; gain = 0.000
+INFO: [Netlist 29-17] Analyzing 189 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-479] Netlist was created with Vivado 2022.2
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Timing 38-478] Restoring timing data from binary archive.
+INFO: [Timing 38-479] Binary timing data restore complete.
+INFO: [Project 1-856] Restoring constraints from binary archive.
+INFO: [Project 1-853] Binary constraint restore complete.
+Reading XDEF placement.
+Reading placer database...
+Reading XDEF routing.
+Read XDEF Files: Time (s): cpu = 00:00:02 ; elapsed = 00:00:03 . Memory (MB): peak = 2193.094 ; gain = 29.891
+Restored from archive | CPU: 2.000000 secs | Memory: 0.000000 MB |
+Finished XDEF File Restore: Time (s): cpu = 00:00:02 ; elapsed = 00:00:03 . Memory (MB): peak = 2193.094 ; gain = 29.891
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.002 . Memory (MB): peak = 2648.738 ; gain = 0.000
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 110 instances were transformed.
+  RAM256X1D => RAM256X1D (MUXF7(x4), MUXF8(x2), RAMD64E(x8)): 64 instances
+  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 2 instances
+  RAM32M16 => RAM32M16 (RAMD32(x14), RAMS32(x2)): 4 instances
+  RAM64M8 => RAM64M8 (RAMD64E(x8)): 40 instances
+
+open_run: Time (s): cpu = 00:00:38 ; elapsed = 00:00:42 . Memory (MB): peak = 2648.738 ; gain = 1689.328
+# report_utilization -file [file join $build utilization.rpt]
+# report_timing_summary -file [file join $build timing.rpt]
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: E, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+# report_drc -file [file join $build drc.rpt]
+Command: report_drc -file D:/fpga_build/shared_pe512_v2/drc.rpt
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file D:/fpga_build/shared_pe512_v2/drc.rpt.
+report_drc completed successfully
+# foreach kind {max min} {
+#  set paths [get_timing_paths -delay_type $kind -max_paths 1]
+#  if {[llength $paths]==0 || [get_property SLACK $paths]<0} {error "Timing failed: $kind"}
+# }
+# set deploy [file join $root build physical overlay]
+# file mkdir $deploy
+# file copy -force [file join $build shared_pe.runs impl_1 shared_pe_wrapper.bit] [file join $deploy shared_pe.bit]
+# file copy -force [file join $build shared_pe.gen sources_1 bd shared_pe hw_handoff shared_pe.hwh] [file join $deploy shared_pe.hwh]
+# foreach name {utilization.rpt timing.rpt drc.rpt} {file copy -force [file join $build $name] [file join $deploy $name]}
+# puts SHARED_PE_BITSTREAM_PASSED
+SHARED_PE_BITSTREAM_PASSED
+# exit
+INFO: [Common 17-206] Exiting Vivado at Mon Nov 23 13:45:04 2026...

@@ -1,0 +1,123 @@
+{
+  "status": "PASS",
+  "physical_fpga": true,
+  "samples": 100,
+  "exact_first_layer": 100,
+  "exact_hidden": 100,
+  "exact_second_layer": 100,
+  "exact_scores": 100,
+  "exact_predictions": 100,
+  "correct_labels": 93,
+  "input_sha256": "a54e44af3a7171b21d2766e003af9d52279bf858589c97b0e130326ba20ef5ee",
+  "logical_placements": [
+    "FC0 rows 0..511",
+    "FC0 rows 512..783",
+    "FC1"
+  ],
+  "physical_pes": 1,
+  "ps_dot_product_fallback": false,
+  "ps_operations": [
+    "combine two FC0 placement vectors",
+    "threshold",
+    "score offsets",
+    "argmax"
+  ],
+  "schedule": "32 binary input rows per tile; not per-pixel scheduler replay",
+  "counters": [
+    {
+      "status": 155,
+      "counts": 0,
+      "error": 0,
+      "launches": 6400,
+      "responses_read": 204800,
+      "discarded": 0,
+      "l2_words": 2048
+    },
+    {
+      "status": 155,
+      "counts": 0,
+      "error": 0,
+      "launches": 3600,
+      "responses_read": 115200,
+      "discarded": 0,
+      "l2_words": 1152
+    },
+    {
+      "status": 155,
+      "counts": 0,
+      "error": 0,
+      "launches": 400,
+      "responses_read": 12800,
+      "discarded": 0,
+      "l2_words": 128
+    }
+  ],
+  "elapsed_seconds": 11.51666955370456,
+  "per_pixel_schedule_check": {
+    "test_index": 8,
+    "status": "PASS",
+    "fc0_launches": 3136,
+    "fc0_responses": 100352,
+    "fc1_launches": 4,
+    "fc1_responses": 128,
+    "prediction": 5,
+    "scores": [
+      46,
+      33,
+      42,
+      30,
+      49,
+      52,
+      51,
+      32,
+      42,
+      42
+    ],
+    "counters": [
+      {
+        "status": 155,
+        "counts": 0,
+        "error": 0,
+        "launches": 2048,
+        "responses_read": 65536,
+        "discarded": 0,
+        "l2_words": 65536
+      },
+      {
+        "status": 155,
+        "counts": 0,
+        "error": 0,
+        "launches": 1088,
+        "responses_read": 34816,
+        "discarded": 0,
+        "l2_words": 34816
+      },
+      {
+        "status": 155,
+        "counts": 0,
+        "error": 0,
+        "launches": 4,
+        "responses_read": 128,
+        "discarded": 0,
+        "l2_words": 128
+      }
+    ]
+  },
+  "digit_5_example": {
+    "test_index": 8,
+    "label": 5,
+    "prediction": 5,
+    "scores": [
+      46,
+      33,
+      42,
+      30,
+      49,
+      52,
+      51,
+      32,
+      42,
+      42
+    ]
+  }
+}
